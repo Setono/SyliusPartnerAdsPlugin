@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="setono_sylius_partner_ads.notifier" class="Setono\SyliusPartnerAdsPlugin\Notifier\Notifier">
+            <argument>%setono_sylius_partner_ads.program_id%</argument>
+            <argument>%setono_sylius_partner_ads.urls.notify%</argument>
+        </service>
+    </services>
+</container>
