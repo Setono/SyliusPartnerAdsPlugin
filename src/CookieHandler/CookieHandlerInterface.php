@@ -28,6 +28,7 @@ interface CookieHandlerInterface
      * Returns the cookie value
      *
      * @param Request $request
+     *
      * @return string
      */
     public function get(Request $request): string;
@@ -36,6 +37,7 @@ interface CookieHandlerInterface
      * Returns true if the request has the cookie set
      *
      * @param Request $request
+     *
      * @return bool
      */
     public function has(Request $request): bool;

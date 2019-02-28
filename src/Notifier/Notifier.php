@@ -28,16 +28,16 @@ final class Notifier implements NotifierInterface
     public function notify(string $orderId, float $orderTotal, string $partnerId, string $ip): void
     {
         $url = str_replace([
-            '$program_id', '$partner_id', '$ip', '$order_id', '$order_total'
+            '$program_id', '$partner_id', '$ip', '$order_id', '$order_total',
         ], [
-            $this->programId, $partnerId, $ip, $orderId, $orderTotal
+            $this->programId, $partnerId, $ip, $orderId, $orderTotal,
         ], $this->notifyUrl);
 
         // todo inject a client to be able to test this and use an HTTP abstraction instead like php-http
 
         $client = new Client([
             RequestOptions::CONNECT_TIMEOUT => 5,
-            RequestOptions::TIMEOUT => 15
+            RequestOptions::TIMEOUT => 15,
         ]);
 
         $client->request('GET', $url);

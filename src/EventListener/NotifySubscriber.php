@@ -49,7 +49,7 @@ final class NotifySubscriber implements EventSubscriberInterface
     {
         return [
             'sylius.order.post_complete' => [
-                'shouldNotify'
+                'shouldNotify',
             ],
             KernelEvents::TERMINATE => [
                 'notify',
@@ -61,7 +61,7 @@ final class NotifySubscriber implements EventSubscriberInterface
     {
         $order = $event->getSubject();
 
-        if(!$order instanceof OrderInterface) {
+        if (!$order instanceof OrderInterface) {
             return;
         }
 
@@ -73,23 +73,23 @@ final class NotifySubscriber implements EventSubscriberInterface
 
     public function notify(PostResponseEvent $event): void
     {
-        if(!$this->notify) {
+        if (!$this->notify) {
             return;
         }
 
-        if(!$event->isMasterRequest()) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
         $statusCode = $event->getResponse()->getStatusCode();
 
-        if($statusCode < 200 || $statusCode > 299) {
+        if ($statusCode < 200 || $statusCode > 299) {
             return;
         }
 
         $request = $event->getRequest();
 
-        if(!$this->cookieHandler->has($request)) {
+        if (!$this->cookieHandler->has($request)) {
             return;
         }
 

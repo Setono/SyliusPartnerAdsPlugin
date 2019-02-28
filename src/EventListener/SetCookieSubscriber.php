@@ -49,7 +49,7 @@ final class SetCookieSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if(!$request->query->has($this->queryParameter)) {
+        if (!$request->query->has($this->queryParameter)) {
             return;
         }
 
