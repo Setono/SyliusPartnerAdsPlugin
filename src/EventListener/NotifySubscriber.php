@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\EventListener;
 
+use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
 use Setono\SyliusPartnerAdsPlugin\Notifier\NotifierInterface;
 use Sylius\Bundle\ResourceBundle\Event\ResourceControllerEvent;
@@ -25,6 +26,11 @@ final class NotifySubscriber implements EventSubscriberInterface
     private $cookieHandler;
 
     /**
+     * @var OrderTotalCalculatorInterface
+     */
+    private $orderTotalCalculator;
+
+    /**
      * @var bool
      */
     private $notify = false;
@@ -35,14 +41,15 @@ final class NotifySubscriber implements EventSubscriberInterface
     private $orderId;
 
     /**
-     * @var float
+     * @var string
      */
     private $orderTotal;
 
-    public function __construct(NotifierInterface $notifier, CookieHandlerInterface $cookieHandler)
+    public function __construct(NotifierInterface $notifier, CookieHandlerInterface $cookieHandler, OrderTotalCalculatorInterface $orderTotalCalculator)
     {
         $this->notifier = $notifier;
         $this->cookieHandler = $cookieHandler;
+        $this->orderTotalCalculator = $orderTotalCalculator;
     }
 
     public static function getSubscribedEvents(): array
@@ -65,10 +72,9 @@ final class NotifySubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->orderId = (string) $order->getNumber();
-        $this->orderTotal = $order->getTotal();
-
         $this->notify = true;
+        $this->orderId = (string) $order->getNumber();
+        $this->orderTotal = $this->orderTotalCalculator->get($order);
     }
 
     public function notify(PostResponseEvent $event): void

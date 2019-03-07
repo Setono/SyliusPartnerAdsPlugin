@@ -6,5 +6,11 @@ namespace Setono\SyliusPartnerAdsPlugin\Notifier;
 
 interface NotifierInterface
 {
-    public function notify(string $orderId, float $orderTotal, string $partnerId, string $ip): void;
+    /**
+     * @param string $orderId
+     * @param string $orderTotal In US format, i.e. 19381 should be '193.81'
+     * @param string $partnerId
+     * @param string $ip
+     */
+    public function notify(string $orderId, string $orderTotal, string $partnerId, string $ip): void;
 }

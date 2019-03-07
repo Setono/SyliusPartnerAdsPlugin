@@ -6,6 +6,7 @@ namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class Configuration implements ConfigurationInterface
 {
@@ -14,8 +15,15 @@ final class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('setono_sylius_partner_ads');
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
+            $treeBuilder = new TreeBuilder('setono_sylius_partner_ads');
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            // BC layer for <= SF 4.1
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('setono_sylius_partner_ads');
+        }
+
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
@@ -33,7 +41,7 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('notify')
                             ->defaultValue('https://www.partner-ads.com/dk/leadtracks2s.php?programid=$program_id&type=salg&partnerid=$partner_id&userip=$ip&ordreid=$order_id&varenummer=x&antal=1&omprsalg=$order_total')
-                            ->info('The URL to call when an order is completed by the customer')
+                            ->info('The URL to call when an order is completed by the customer. You can use these variables in your URL: $program_id, $partner_id, $ip, $order_id, $order_total')
                         ->end()
                     ->end()
                 ->end()
@@ -51,6 +59,17 @@ final class Configuration implements ConfigurationInterface
                             ->info('The number of days before the cookie expires. Partner Ads\' official docs says it should be 40')
                         ->end()
                     ->end()
+                ->end()
+                ->arrayNode('messenger')
+                    ->{interface_exists(MessageBusInterface::class) ? 'canBeDisabled' : 'canBeEnabled'}()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('command_bus')
+                            ->cannotBeEmpty()
+                            ->info('The service id for the message bus you use for commands')
+                        ->end()
+                    ->end()
+
                 ->end()
             ->end()
         ;

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 interface CookieHandlerInterface
 {
     /**
-     * Sets the cookie on the given response with the given value
+     * Sets the cookie on the given response with the value being $partnerId
      *
      * @param Response $response
      * @param string $partnerId

@@ -3,13 +3,14 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="setono_sylius_partner_ads.event_subscriber.notify" class="Setono\SyliusPartnerAdsPlugin\EventListener\NotifySubscriber">
-            <argument type="service" id="setono_sylius_partner_ads.notifier"/>
-            <argument type="service" id="setono_sylius_partner_ads.cookie_handler"/>
+            <argument type="service" id="setono_sylius_partner_ads.notifier.default"/>
+            <argument type="service" id="setono_sylius_partner_ads.cookie_handler.default"/>
+            <argument type="service" id="setono_sylius_partner_ads.calculator.order_total"/>
             <tag name="kernel.event_subscriber"/>
         </service>
 
         <service id="setono_sylius_partner_ads.event_subscriber.set_cookie" class="Setono\SyliusPartnerAdsPlugin\EventListener\SetCookieSubscriber">
-            <argument type="service" id="setono_sylius_partner_ads.cookie_handler"/>
+            <argument type="service" id="setono_sylius_partner_ads.cookie_handler.default"/>
             <argument>%setono_sylius_partner_ads.query_parameter%</argument>
             <tag name="kernel.event_subscriber"/>
         </service>
