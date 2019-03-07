@@ -9,11 +9,6 @@ use GuzzleHttp\RequestOptions;
 
 final class SyncNotifier extends Notifier
 {
-    /**
-     * @param string $url
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
     protected function callUrl(string $url): void
     {
         $client = new Client([

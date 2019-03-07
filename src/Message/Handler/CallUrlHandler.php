@@ -11,11 +11,6 @@ use Webmozart\Assert\Assert;
 
 final class CallUrlHandler
 {
-    /**
-     * @param CallUrl $message
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
     public function __invoke(CallUrl $message)
     {
         $client = new Client([
