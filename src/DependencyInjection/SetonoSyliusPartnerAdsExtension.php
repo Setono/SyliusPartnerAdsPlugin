@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
+use Setono\SyliusPartnerAdsPlugin\Message\Command\CallUrl;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -59,7 +60,7 @@ final class SetonoSyliusPartnerAdsExtension extends Extension implements Prepend
         $container->prependExtensionConfig('framework', [
             'messenger' => [
                 'routing' => [
-                    '*' => $transport,
+                    CallUrl::class => $transport,
                 ],
             ],
         ]);
