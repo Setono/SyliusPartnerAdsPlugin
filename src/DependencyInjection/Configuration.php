@@ -68,6 +68,11 @@ final class Configuration implements ConfigurationInterface
                             ->cannotBeEmpty()
                             ->info('The service id for the message bus you use for commands')
                         ->end()
+                        ->scalarNode('transport')
+                            ->cannotBeEmpty()
+                            ->info('The transport to use. If you only have one transport defined that transport will be used, else you have to define it here')
+                            ->example('amqp')
+                        ->end()
                     ->end()
 
                 ->end()

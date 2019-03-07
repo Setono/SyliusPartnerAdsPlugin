@@ -35,30 +35,31 @@ final class SetonoSyliusPartnerAdsExtension extends Extension implements Prepend
 
     public function prepend(ContainerBuilder $container): void
     {
-        // see https://github.com/kalessil/phpinspectionsea/blob/master/docs/performance.md#slow-array-function-used-in-loop
-        $definedTransports = [[]];
+        $config = $this->processConfiguration($this->getConfiguration([], $container), $container->getExtensionConfig($this->getAlias()));
 
-        $frameworkConfigs = $container->getExtensionConfig('framework');
-        foreach ($frameworkConfigs as $frameworkConfig) {
-            foreach ($frameworkConfig as $component => $componentConfig) {
-                if ('messenger' !== $component || !array_key_exists('transports', $componentConfig) || !is_array($componentConfig['transports'])) {
-                    continue;
-                }
-
-                $definedTransports[] = $componentConfig['transports'];
-            }
+        if (!$config['messenger']['enabled']) {
+            return;
         }
 
-        $definedTransports = array_merge(...$definedTransports);
+        $transport = $config['messenger']['transport'] ?? null;
 
-        if (!array_key_exists('amqp', $definedTransports)) {
-            throw new \InvalidArgumentException('This plugin only works if you have a \'amqp\' transport defined, else do not disable the messenger component by setting setono_sylius_partner_ads.messenger.enabled to false'); // @todo better exception
+        if (null === $transport) {
+            $frameworkConfig = array_merge_recursive(...$container->getExtensionConfig('framework'));
+            if (!isset($frameworkConfig['messenger']['transports']) || !is_array($frameworkConfig['messenger']['transports'])) {
+                throw new \InvalidArgumentException('You need to define a transport for your messenger'); // @todo better exception
+            }
+
+            if (count($frameworkConfig['messenger']['transports']) > 1) {
+                throw new \InvalidArgumentException('You have defined more than one transport and therefore you have to choose which transport you want to use for this plugin'); // @todo better exception
+            }
+
+            $transport = array_keys($frameworkConfig['messenger']['transports'])[0];
         }
 
         $container->prependExtensionConfig('framework', [
             'messenger' => [
                 'routing' => [
-                    '*' => 'amqp',
+                    '*' => $transport,
                 ],
             ],
         ]);
