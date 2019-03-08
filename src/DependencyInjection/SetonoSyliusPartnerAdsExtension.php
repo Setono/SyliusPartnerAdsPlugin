@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
+use Setono\SyliusPartnerAdsPlugin\Exception\MultipleTransportsDefinedException;
+use Setono\SyliusPartnerAdsPlugin\Exception\NoDefinedTransportsException;
 use Setono\SyliusPartnerAdsPlugin\Message\Command\CallUrl;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -47,11 +49,11 @@ final class SetonoSyliusPartnerAdsExtension extends Extension implements Prepend
         if (null === $transport) {
             $frameworkConfig = array_merge_recursive(...$container->getExtensionConfig('framework'));
             if (!isset($frameworkConfig['messenger']['transports']) || !is_array($frameworkConfig['messenger']['transports'])) {
-                throw new \InvalidArgumentException('You need to define a transport for your messenger'); // @todo better exception
+                throw new NoDefinedTransportsException();
             }
 
             if (count($frameworkConfig['messenger']['transports']) > 1) {
-                throw new \InvalidArgumentException('You have defined more than one transport and therefore you have to choose which transport you want to use for this plugin'); // @todo better exception
+                throw new MultipleTransportsDefinedException();
             }
 
             $transport = array_keys($frameworkConfig['messenger']['transports'])[0];
