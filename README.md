@@ -34,12 +34,42 @@ return [
 ];
 ```
 
-### Step 3: Go get 'em tiger!
+### Step 3: Configure plugin
+```yaml
+# config/packages/setono_sylius_partner_ads.yaml
+setono_sylius_partner_ads:
+    program_id: 1234 # Insert your Partner Ads program id
+```
 
-# TODO
-- [ ] Save a cookie with the partner id
-- [ ] Send HTTP request to Partner Ads when the order is complete
-- [ ] Send HTTP request to Partner Ads when an order is cancelled telling them to debit the affiliate partner
+### Step 4 (optional): Configure Symfony Messenger
+This plugin will make a HTTP request to Partner Ads when a customer completes an order. This will make the 'Thank you' page load slower. To circumvent that you can use RabbitMQ with Symfony Messenger to send this HTTP request asynchronously.
+
+Follow the installation instructions here: [How to Use the Messenger](https://symfony.com/doc/current/messenger.html) and then [configure a transport](https://symfony.com/doc/current/messenger.html#transports).
+
+Basically you should do:
+```bash
+$ composer req messenger symfony/serializer-pack
+```
+
+And then configure the Messenger component:
+```yaml
+# config/packages/messenger.yaml
+framework:
+    messenger:
+        transports:
+            amqp: "%env(MESSENGER_TRANSPORT_DSN)%"
+```
+
+```yaml
+# .env
+###> symfony/messenger ###
+MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
+###< symfony/messenger ###
+```
+
+After this the Messenger will be automatically enabled in this plugin and subsequently it will send an asynchronous request to Partner Ads instead of a synchronous.
+
+For testing purposes you can sign up for a free RabbitMQ cloud service here: [CloudAMQP](https://www.cloudamqp.com/plans.html).
 
 [ico-version]: https://img.shields.io/packagist/v/setono/sylius-partner-ads-plugin.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
