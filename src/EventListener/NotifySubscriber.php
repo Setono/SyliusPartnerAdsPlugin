@@ -87,12 +87,6 @@ final class NotifySubscriber implements EventSubscriberInterface
             return;
         }
 
-        $statusCode = $event->getResponse()->getStatusCode();
-
-        if ($statusCode < 200 || $statusCode > 299) {
-            return;
-        }
-
         $request = $event->getRequest();
 
         if (!$this->cookieHandler->has($request)) {
