@@ -22,7 +22,7 @@ class Program implements ProgramInterface
     protected $programId;
 
     /**
-     * @var null|ChannelInterface
+     * @var ChannelInterface|null
      */
     protected $channel;
 
