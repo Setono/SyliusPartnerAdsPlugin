@@ -1,0 +1,13 @@
+setono_sylius_partner_ads_admin_program:
+    resource: |
+        section: admin
+        alias: setono_sylius_partner_ads.program
+        templates: SyliusAdminBundle:Crud
+        redirect: update
+        grid: setono_sylius_partner_ads_admin_program
+        vars:
+            all:
+                subheader: setono_sylius_partner_ads.ui.manage_programs
+            index:
+                icon: 'handshake outline'
+    type: sylius.resource

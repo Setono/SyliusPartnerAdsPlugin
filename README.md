@@ -35,13 +35,35 @@ return [
 ```
 
 ### Step 3: Configure plugin
+
 ```yaml
-# config/packages/setono_sylius_partner_ads.yaml
-setono_sylius_partner_ads:
-    program_id: 1234 # Insert your Partner Ads program id
+# config/packages/_sylius.yaml
+imports:
+    # ...
+    - { resource: "@SetonoSyliusPartnerAdsPlugin/Resources/config/app/config.yaml" }
+    # ...
 ```
 
-### Step 4 (optional): Configure Symfony Messenger
+### Step 4: Import routing
+
+```yaml
+# config/routes/setono_sylius_partner_ads.yaml
+setono_partner_ads_plugin:
+    resource: "@SetonoSyliusPartnerAdsPlugin/Resources/config/routing.yaml"
+```
+
+### Step 5: Update your database schema
+
+```bash
+$ php bin/console doctrine:migrations:diff
+$ php bin/console doctrine:migrations:migrate
+```
+
+### Step 6: Setup program
+
+Login to your Sylius app admin and go to the Partner Ads page and click "Create" to create a new program. Fill in the program id of your Partner Ads program, make sure "enable" is toggled on, and choose which channel the program should be applied to. Please notice you should only make one program for each channel, or else you will end up with undefined behaviour.
+
+### Step 7 (optional): Configure Symfony Messenger
 This plugin will make a HTTP request to Partner Ads when a customer completes an order. This will make the 'Thank you' page load slower. To circumvent that you can use RabbitMQ with Symfony Messenger to send this HTTP request asynchronously.
 
 Follow the installation instructions here: [How to Use the Messenger](https://symfony.com/doc/current/messenger.html) and then [configure a transport](https://symfony.com/doc/current/messenger.html#transports).

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\SyliusPartnerAdsPlugin\EventListener;
 
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
+use Setono\SyliusPartnerAdsPlugin\Context\ProgramContext;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
 use Setono\SyliusPartnerAdsPlugin\Notifier\NotifierInterface;
 use Sylius\Bundle\ResourceBundle\Event\ResourceControllerEvent;
@@ -31,6 +32,11 @@ final class NotifySubscriber implements EventSubscriberInterface
     private $orderTotalCalculator;
 
     /**
+     * @var ProgramContext
+     */
+    private $programContext;
+
+    /**
      * @var bool
      */
     private $notify = false;
@@ -45,11 +51,12 @@ final class NotifySubscriber implements EventSubscriberInterface
      */
     private $orderTotal;
 
-    public function __construct(NotifierInterface $notifier, CookieHandlerInterface $cookieHandler, OrderTotalCalculatorInterface $orderTotalCalculator)
+    public function __construct(NotifierInterface $notifier, CookieHandlerInterface $cookieHandler, OrderTotalCalculatorInterface $orderTotalCalculator, ProgramContext $programContext)
     {
         $this->notifier = $notifier;
         $this->cookieHandler = $cookieHandler;
         $this->orderTotalCalculator = $orderTotalCalculator;
+        $this->programContext = $programContext;
     }
 
     public static function getSubscribedEvents(): array
@@ -93,6 +100,15 @@ final class NotifySubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->notifier->notify($this->orderId, $this->orderTotal, $this->cookieHandler->get($request), (string) $request->getClientIp());
+        if ($this->programContext->getProgram() === null || $this->programContext->getProgram()->getProgramId() === null) {
+            return;
+        }
+
+        $this->notifier->notify(
+            $this->programContext->getProgram()->getProgramId(),
+            $this->orderId, $this->orderTotal,
+            $this->cookieHandler->get($request),
+            (string) $request->getClientIp()
+        );
     }
 }

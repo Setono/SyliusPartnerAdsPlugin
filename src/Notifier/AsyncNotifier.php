@@ -14,9 +14,9 @@ final class AsyncNotifier extends Notifier
      */
     private $messageBus;
 
-    public function __construct(int $programId, string $notifyUrl, MessageBusInterface $messageBus)
+    public function __construct(string $notifyUrl, MessageBusInterface $messageBus)
     {
-        parent::__construct($programId, $notifyUrl);
+        parent::__construct($notifyUrl);
 
         $this->messageBus = $messageBus;
     }
