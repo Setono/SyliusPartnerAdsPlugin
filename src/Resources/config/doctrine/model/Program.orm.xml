@@ -5,7 +5,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Setono\SyliusPartnerAdsPlugin\Model\Program" table="setono_sylius_criteo__program">
+    <entity name="Setono\SyliusPartnerAdsPlugin\Model\Program" table="setono_sylius_partner_ads__program">
 
         <indexes>
             <index columns="enabled" name="idx_enabled"/>

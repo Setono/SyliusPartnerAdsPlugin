@@ -48,7 +48,7 @@ imports:
 
 ```yaml
 # config/routes/setono_sylius_partner_ads.yaml
-setono_criteo_plugin:
+setono_partner_ads_plugin:
     resource: "@SetonoSyliusPartnerAdsPlugin/Resources/config/routing.yaml"
 ```
 
