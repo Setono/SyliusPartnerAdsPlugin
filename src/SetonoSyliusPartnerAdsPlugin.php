@@ -8,10 +8,11 @@ use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterAsyncNoti
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterCommandBusPass;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterDefaultNotifierPass;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
+use Sylius\Bundle\ResourceBundle\AbstractResourceBundle;
+use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-final class SetonoSyliusPartnerAdsPlugin extends Bundle
+final class SetonoSyliusPartnerAdsPlugin extends AbstractResourceBundle
 {
     use SyliusPluginTrait;
 
@@ -22,5 +23,12 @@ final class SetonoSyliusPartnerAdsPlugin extends Bundle
         $container->addCompilerPass(new RegisterCommandBusPass());
         $container->addCompilerPass(new RegisterAsyncNotifierPass());
         $container->addCompilerPass(new RegisterDefaultNotifierPass());
+    }
+
+    public function getSupportedDrivers(): array
+    {
+        return [
+            SyliusResourceBundle::DRIVER_DOCTRINE_ORM,
+        ];
     }
 }

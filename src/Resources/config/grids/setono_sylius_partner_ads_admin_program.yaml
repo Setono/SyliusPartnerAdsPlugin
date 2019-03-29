@@ -1,0 +1,23 @@
+sylius_grid:
+    grids:
+        setono_sylius_partner_ads_admin_program:
+            driver:
+                name: doctrine/orm
+                options:
+                    class: "%setono_sylius_partner_ads.model.program.class%"
+            fields:
+                programId:
+                    type: string
+                    label: setono_sylius_partner_ads.ui.program_id
+                channel:
+                    type: string
+                    label: setono_sylius_partner_ads.ui.channel
+            actions:
+                main:
+                    create:
+                        type: create
+                item:
+                    update:
+                        type: update
+                    delete:
+                        type: delete

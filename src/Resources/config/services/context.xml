@@ -2,11 +2,9 @@
 
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Setono\SyliusPartnerAdsPlugin\Notifier\NotifierInterface" alias="setono_sylius_partner_ads.notifier.default"/>
-
-        <service id="Setono\SyliusPartnerAdsPlugin\Notifier\SyncNotifier">
-            <argument type="service" id="session"/>
-            <argument>%setono_sylius_partner_ads.urls.notify%</argument>
+        <service id="setono_sylius_partner_ads.context.program" class="Setono\SyliusPartnerAdsPlugin\Context\ProgramContext">
+            <argument type="service" id="sylius.context.channel.composite"/>
+            <argument type="service" id="setono_sylius_partner_ads.repository.program"/>
         </service>
     </services>
 </container>

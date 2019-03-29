@@ -1,0 +1,14 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Edit program
+        new_program: New program
+        programs: Partner Ads Programs
+        manage_programs: Manage your Partner Ads programs
+        program_index: Program index
+        program_id: Program id
+        program_id_placeholder: Insert your program id, i.e. 392871
+        channel: Channel
+        select_channel: Select channel...
+        enabled: Enabled
+        partner_ads: Partner Ads
+        program: Program

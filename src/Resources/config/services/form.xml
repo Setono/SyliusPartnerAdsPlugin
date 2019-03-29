@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="setono_sylius_partner_ads.form.program.validation_groups" type="collection">
+            <parameter>setono_sylius_partner_ads</parameter>
+        </parameter>
+    </parameters>
+    <services>
+        <service id="setono_sylius_partner_ads.form.program" class="Setono\SyliusPartnerAdsPlugin\Form\Type\ProgramType">
+            <argument>%setono_sylius_partner_ads.model.program.class%</argument>
+            <argument>%setono_sylius_partner_ads.form.program.validation_groups%</argument>
+            <tag name="form.type"/>
+        </service>
+    </services>
+</container>
