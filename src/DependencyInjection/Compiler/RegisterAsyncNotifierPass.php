@@ -23,7 +23,6 @@ final class RegisterAsyncNotifierPass implements CompilerPassInterface
         }
 
         $definition = new Definition(AsyncNotifier::class, [
-            $container->get('session'),
             $container->getParameter('setono_sylius_partner_ads.urls.notify'),
             new Reference('setono_sylius_partner_ads.messenger.command_bus'),
         ]);

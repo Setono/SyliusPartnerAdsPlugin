@@ -5,39 +5,27 @@ dist: trusty
 sudo: false
 
 php:
-  - 7.2
-  - 7.3
+    - 7.2
+    - 7.3
 
 cache:
-  yarn: true
-  directories:
-    - ~/.composer/cache/files
+    yarn: true
+    directories:
+        - ~/.composer/cache/files
 
 env:
-  global:
-    - APP_ENV=test
+    global:
+        - APP_ENV=test
 
 before_install:
-  - phpenv config-rm xdebug.ini
-  - echo "memory_limit=4096M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    - phpenv config-rm xdebug.ini
+    - echo "memory_limit=4096M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 install:
-  - composer install --no-interaction --prefer-dist
-  - (cd tests/Application && yarn install)
-
-before_script:
-  - (cd tests/Application && bin/console doctrine:database:create -vvv)
-  - (cd tests/Application && bin/console doctrine:schema:create -vvv)
-  - (cd tests/Application && bin/console assets:install public -vvv)
-  - (cd tests/Application && bin/console cache:warmup -vvv)
-  - (cd tests/Application && yarn build)
-
-  # Run webserver
-  - (cd tests/Application && bin/console server:run 127.0.0.1:8000 --quiet > /dev/null 2>&1 &)
+    - composer install --no-interaction --prefer-dist
 
 script:
-  - composer validate --strict
-  - composer check-style
-  - composer analyse
-  - composer test
-  - vendor/bin/behat --strict -vvv --no-interaction || vendor/bin/behat --strict -vvv --no-interaction --rerun
+    - composer validate --strict
+    - composer check-style
+    - composer analyse
+    - composer test

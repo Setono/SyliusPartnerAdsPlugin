@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Model;
 
-use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 
 class Program implements ProgramInterface
@@ -22,7 +22,7 @@ class Program implements ProgramInterface
     protected $programId;
 
     /**
-     * @var ChannelInterface
+     * @var null|ChannelInterface
      */
     protected $channel;
 
@@ -61,7 +61,7 @@ class Program implements ProgramInterface
     /**
      * {@inheritdoc}
      */
-    public function setChannel(ChannelInterface $channel): void
+    public function setChannel(?ChannelInterface $channel): void
     {
         $this->channel = $channel;
     }

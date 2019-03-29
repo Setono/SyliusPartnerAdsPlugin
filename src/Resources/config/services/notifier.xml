@@ -5,7 +5,6 @@
         <service id="Setono\SyliusPartnerAdsPlugin\Notifier\NotifierInterface" alias="setono_sylius_partner_ads.notifier.default"/>
 
         <service id="Setono\SyliusPartnerAdsPlugin\Notifier\SyncNotifier">
-            <argument type="service" id="session"/>
             <argument>%setono_sylius_partner_ads.urls.notify%</argument>
         </service>
     </services>

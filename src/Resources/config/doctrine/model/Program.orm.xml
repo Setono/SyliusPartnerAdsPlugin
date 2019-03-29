@@ -18,10 +18,7 @@
         <field name="programId" type="integer" unique="true" />
         <field name="enabled" column="enabled" type="boolean" />
 
-        <one-to-one field="channel" target-entity="Sylius\Component\Channel\Model\ChannelInterface">
-            <join-column name="channel_id" referenced-column-name="id" />
-        </one-to-one>
-
+        <one-to-one field="channel" target-entity="Sylius\Component\Channel\Model\ChannelInterface" />
     </entity>
 
 </doctrine-mapping>

@@ -14,11 +14,4 @@ interface NotifierInterface
      * @param string $ip
      */
     public function notify(int $programId, string $orderId, string $orderTotal, string $partnerId, string $ip): void;
-
-    /**
-     * Returns true if the notified has been called successfully
-     *
-     * @return bool
-     */
-    public function hasBeenNotified(): bool;
 }
