@@ -1,6 +1,7 @@
 # Sylius Partner Ads Plugin
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Latest Version][ico-version]][link-packagist]
+[![Latest Unstable Version][ico-unstable-version]][link-packagist]
 [![Software License][ico-license]](LICENSE)
 [![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-code-quality]][link-code-quality]
@@ -93,8 +94,9 @@ After this the Messenger will be automatically enabled in this plugin and subseq
 
 For testing purposes you can sign up for a free RabbitMQ cloud service here: [CloudAMQP](https://www.cloudamqp.com/plans.html).
 
-[ico-version]: https://img.shields.io/packagist/v/setono/sylius-partner-ads-plugin.svg?style=flat-square
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
+[ico-unstable-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/unstable
+[ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license
 [ico-travis]: https://travis-ci.com/Setono/SyliusPartnerAdsPlugin.svg?branch=master
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/Setono/SyliusPartnerAdsPlugin.svg?style=flat-square
 
