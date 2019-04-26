@@ -11,15 +11,13 @@ use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         if (method_exists(TreeBuilder::class, 'getRootNode')) {
@@ -31,6 +29,7 @@ final class Configuration implements ConfigurationInterface
             $rootNode = $treeBuilder->root('setono_sylius_partner_ads');
         }
 
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
