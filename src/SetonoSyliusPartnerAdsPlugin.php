@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin;
 
-use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterAsyncNotifierPass;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterCommandBusPass;
-use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterDefaultNotifierPass;
+use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterHttpClientPass;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
 use Sylius\Bundle\ResourceBundle\AbstractResourceBundle;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
@@ -21,8 +20,7 @@ final class SetonoSyliusPartnerAdsPlugin extends AbstractResourceBundle
         parent::build($container);
 
         $container->addCompilerPass(new RegisterCommandBusPass());
-        $container->addCompilerPass(new RegisterAsyncNotifierPass());
-        $container->addCompilerPass(new RegisterDefaultNotifierPass());
+        $container->addCompilerPass(new RegisterHttpClientPass());
     }
 
     public function getSupportedDrivers(): array

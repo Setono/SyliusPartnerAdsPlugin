@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Setono\SyliusPartnerAdsPlugin\EventListener;
 
-use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
-use Setono\SyliusPartnerAdsPlugin\EventListener\SetCookieSubscriber;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
+use Setono\SyliusPartnerAdsPlugin\EventListener\SetCookieSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -59,14 +61,14 @@ class SetCookieSubscriberSpec extends ObjectBehavior
     public function it_sets(FilterResponseEvent $event, CookieHandlerInterface $cookieHandler): void
     {
         $request = new Request([
-            $this->param => 'yeah'
+            $this->param => '123',
         ]);
 
         $event->isMasterRequest()->willReturn(true);
         $event->getRequest()->willReturn($request)->shouldBeCalled();
         $event->getResponse()->willReturn(new Response());
 
-        $cookieHandler->set(Argument::any(), 'yeah')->shouldBeCalled();
+        $cookieHandler->set(Argument::any(), '123')->shouldBeCalled();
 
         $this->setCookie($event);
     }

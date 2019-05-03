@@ -26,41 +26,26 @@ class Program implements ProgramInterface
      */
     protected $channel;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProgramId(): ?int
     {
         return $this->programId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setProgramId(int $programId): void
     {
         $this->programId = $programId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getChannel(): ?ChannelInterface
     {
         return $this->channel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setChannel(?ChannelInterface $channel): void
     {
         $this->channel = $channel;

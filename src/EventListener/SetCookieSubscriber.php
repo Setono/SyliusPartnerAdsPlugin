@@ -53,6 +53,6 @@ final class SetCookieSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->cookieHandler->set($event->getResponse(), $request->query->get($this->queryParameter));
+        $this->cookieHandler->set($event->getResponse(), (int) $request->query->get($this->queryParameter));
     }
 }

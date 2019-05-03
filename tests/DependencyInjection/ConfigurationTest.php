@@ -25,16 +25,10 @@ final class ConfigurationTest extends TestCase
         $this->assertConfigurationIsValid([
             [
                 'query_parameter' => 'paid',
-                'urls' => [
-                    'notify' => 'https://www.partner-ads.com/dk/leadtracks2s.php?programid=$program_id&type=salg&partnerid=$partner_id&userip=$ip&ordreid=$order_id&varenummer=x&antal=1&omprsalg=$order_total'
-                ],
                 'cookie' => [
                     'name' => 'setono_sylius_partner_ads_cookie',
                     'expire' => 40
                 ],
-                'messenger' => [
-                    'enabled' => true,
-                ]
             ]
         ]);
     }

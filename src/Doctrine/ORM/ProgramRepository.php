@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Doctrine\ORM;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
 use Setono\SyliusPartnerAdsPlugin\Repository\ProgramRepositoryInterface;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
@@ -13,6 +14,8 @@ class ProgramRepository extends EntityRepository implements ProgramRepositoryInt
 {
     /**
      * {@inheritdoc}
+     *
+     * @throws NonUniqueResultException
      */
     public function findOneByChannel(ChannelInterface $channel): ?ProgramInterface
     {

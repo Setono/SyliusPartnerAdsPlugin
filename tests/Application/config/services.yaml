@@ -2,3 +2,10 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en_US
+
+services:
+    Tests\Setono\SyliusPartnerAdsPlugin\Application\Client\Client:
+        decorates: setono_sylius_partner_ads.client.default
+        arguments:
+            - '@setono_sylius_partner_ads.url_provider.notify'
+            - '@logger'

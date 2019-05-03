@@ -13,7 +13,7 @@ final class CookieHandlerTest extends TestCase
 {
     private $name = 'name';
     private $expire = 40;
-    private $partnerId = '1234';
+    private $partnerId = 1234;
 
     /**
      * @test
@@ -30,7 +30,7 @@ final class CookieHandlerTest extends TestCase
         $cookie = $cookies[0];
 
         $this->assertSame($this->name, $cookie->getName());
-        $this->assertSame($this->partnerId, $cookie->getValue());
+        $this->assertSame($this->partnerId, (int) $cookie->getValue());
 
         $expireInDays = (int) ceil(($cookie->getExpiresTime() - time()) / 60 / 60 / 24);
 

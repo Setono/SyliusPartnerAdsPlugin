@@ -64,7 +64,7 @@ $ php bin/console doctrine:migrations:migrate
 
 Login to your Sylius app admin and go to the Partner Ads page and click "Create" to create a new program. Fill in the program id of your Partner Ads program, make sure "enable" is toggled on, and choose which channel the program should be applied to. Please notice you should only make one program for each channel, or else you will end up with undefined behaviour.
 
-### Step 7 (optional): Configure Symfony Messenger
+### Step 7 (optional, but recommended): Configure Async HTTP requests
 This plugin will make a HTTP request to Partner Ads when a customer completes an order. This will make the 'Thank you' page load slower. To circumvent that you can use RabbitMQ with Symfony Messenger to send this HTTP request asynchronously.
 
 Follow the installation instructions here: [How to Use the Messenger](https://symfony.com/doc/current/messenger.html) and then [configure a transport](https://symfony.com/doc/current/messenger.html#transports).
@@ -74,7 +74,7 @@ Basically you should do:
 $ composer req messenger symfony/serializer-pack
 ```
 
-And then configure the Messenger component:
+Then configure the Messenger component:
 ```yaml
 # config/packages/messenger.yaml
 framework:
@@ -88,6 +88,14 @@ framework:
 ###> symfony/messenger ###
 MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
 ###< symfony/messenger ###
+```
+
+And finally configure the plugin to use your transport:
+
+```yaml
+setono_sylius_partner_ads:
+    messenger:
+        transport: amqp
 ```
 
 After this the Messenger will be automatically enabled in this plugin and subsequently it will send an asynchronous request to Partner Ads instead of a synchronous.
