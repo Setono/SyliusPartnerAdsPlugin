@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace Setono\SyliusPartnerAdsPlugin\EventListener;
 
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
-use Setono\SyliusPartnerAdsPlugin\Context\ProgramContext;
+use Setono\SyliusPartnerAdsPlugin\Context\ProgramContextInterface;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
-use Setono\SyliusPartnerAdsPlugin\Notifier\NotifierInterface;
+use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
 use Sylius\Bundle\ResourceBundle\Event\ResourceControllerEvent;
 use Sylius\Component\Core\Model\OrderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class NotifySubscriber implements EventSubscriberInterface
 {
     /**
-     * @var NotifierInterface
+     * @var MessageBusInterface
      */
-    private $notifier;
+    private $messageBus;
 
     /**
      * @var CookieHandlerInterface
@@ -32,46 +32,39 @@ final class NotifySubscriber implements EventSubscriberInterface
     private $orderTotalCalculator;
 
     /**
-     * @var ProgramContext
+     * @var ProgramContextInterface
      */
     private $programContext;
 
     /**
-     * @var bool
+     * @var RequestStack
      */
-    private $notify = false;
+    private $requestStack;
 
-    /**
-     * @var string
-     */
-    private $orderId;
-
-    /**
-     * @var string
-     */
-    private $orderTotal;
-
-    public function __construct(NotifierInterface $notifier, CookieHandlerInterface $cookieHandler, OrderTotalCalculatorInterface $orderTotalCalculator, ProgramContext $programContext)
-    {
-        $this->notifier = $notifier;
+    public function __construct(
+        MessageBusInterface $messageBus,
+        CookieHandlerInterface $cookieHandler,
+        OrderTotalCalculatorInterface $orderTotalCalculator,
+        ProgramContextInterface $programContext,
+        RequestStack $requestStack
+    ) {
+        $this->messageBus = $messageBus;
         $this->cookieHandler = $cookieHandler;
         $this->orderTotalCalculator = $orderTotalCalculator;
         $this->programContext = $programContext;
+        $this->requestStack = $requestStack;
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
             'sylius.order.post_complete' => [
-                'shouldNotify',
-            ],
-            KernelEvents::TERMINATE => [
                 'notify',
             ],
         ];
     }
 
-    public function shouldNotify(ResourceControllerEvent $event): void
+    public function notify(ResourceControllerEvent $event): void
     {
         $order = $event->getSubject();
 
@@ -79,36 +72,27 @@ final class NotifySubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->notify = true;
-        $this->orderId = (string) $order->getNumber();
-        $this->orderTotal = $this->orderTotalCalculator->get($order);
-    }
-
-    public function notify(PostResponseEvent $event): void
-    {
-        if (!$this->notify) {
+        $request = $this->requestStack->getMasterRequest();
+        if (null === $request) {
             return;
         }
-
-        if (!$event->isMasterRequest()) {
-            return;
-        }
-
-        $request = $event->getRequest();
 
         if (!$this->cookieHandler->has($request)) {
             return;
         }
 
-        if ($this->programContext->getProgram() === null || $this->programContext->getProgram()->getProgramId() === null) {
+        $program = $this->programContext->getProgram();
+
+        if (null === $program || $program->getProgramId() === null) {
             return;
         }
 
-        $this->notifier->notify(
-            $this->programContext->getProgram()->getProgramId(),
-            $this->orderId, $this->orderTotal,
+        $this->messageBus->dispatch(new Notify(
+            $program->getProgramId(),
+            (string) $order->getNumber(),
+            $this->orderTotalCalculator->get($order),
             $this->cookieHandler->get($request),
             (string) $request->getClientIp()
-        );
+        ));
     }
 }
