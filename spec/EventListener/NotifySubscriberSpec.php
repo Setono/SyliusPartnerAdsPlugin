@@ -14,6 +14,7 @@ use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
 use stdClass;
 use Sylius\Bundle\ResourceBundle\Event\ResourceControllerEvent;
 use Sylius\Component\Core\Model\OrderInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\Envelope;
@@ -37,6 +38,11 @@ class NotifySubscriberSpec extends ObjectBehavior
         $this->shouldHaveType(NotifySubscriber::class);
     }
 
+    public function it_implements_event_subscriber_interface(): void
+    {
+        $this->shouldImplement(EventSubscriberInterface::class);
+    }
+
     public function it_notifies(
         ResourceControllerEvent $event,
         OrderInterface $order,
@@ -56,7 +62,7 @@ class NotifySubscriberSpec extends ObjectBehavior
         $programContext->getProgram()->willReturn($program);
         $program->getProgramId()->willReturn(1234);
         $orderTotalCalculator->get($order)->willReturn(199.0);
-        $envelope = new Envelope(new stdClass(), $stamp->getWrappedObject());
+        $envelope = new Envelope(new stdClass(), [$stamp->getWrappedObject()]);
 
         $messageBus->dispatch(Argument::any())->willReturn($envelope)->shouldBeCalled();
 
