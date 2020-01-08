@@ -11,14 +11,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class SetCookieSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var CookieHandlerInterface
-     */
+    /** @var CookieHandlerInterface */
     private $cookieHandler;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $queryParameter;
 
     public function __construct(CookieHandlerInterface $cookieHandler, string $queryParameter)

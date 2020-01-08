@@ -6,29 +6,19 @@ namespace Setono\SyliusPartnerAdsPlugin\Message\Command;
 
 final class Notify
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $programId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $orderId;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     private $orderTotal;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $partnerId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $ip;
 
     public function __construct(int $programId, string $orderId, float $orderTotal, int $partnerId, string $ip)

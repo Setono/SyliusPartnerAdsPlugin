@@ -23,14 +23,17 @@ final class Configuration implements ConfigurationInterface
     {
         if (method_exists(TreeBuilder::class, 'getRootNode')) {
             $treeBuilder = new TreeBuilder('setono_sylius_partner_ads');
+
+            /** @var ArrayNodeDefinition $rootNode */
             $rootNode = $treeBuilder->getRootNode();
         } else {
             // BC layer for <= SF 4.1
             $treeBuilder = new TreeBuilder();
+
+            /** @var ArrayNodeDefinition $rootNode */
             $rootNode = $treeBuilder->root('setono_sylius_partner_ads');
         }
 
-        /** @var ArrayNodeDefinition $rootNode */
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()

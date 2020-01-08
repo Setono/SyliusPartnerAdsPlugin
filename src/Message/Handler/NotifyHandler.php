@@ -9,9 +9,7 @@ use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
 
 final class NotifyHandler
 {
-    /**
-     * @var ClientInterface
-     */
+    /** @var ClientInterface */
     private $client;
 
     public function __construct(ClientInterface $client)
@@ -19,7 +17,7 @@ final class NotifyHandler
         $this->client = $client;
     }
 
-    public function __invoke(Notify $message)
+    public function __invoke(Notify $message): void
     {
         $this->client->notify($message->getProgramId(), $message->getOrderId(), $message->getOrderTotal(), $message->getPartnerId(), $message->getIp());
     }

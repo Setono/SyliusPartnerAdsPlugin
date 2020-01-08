@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Setono\SyliusPartnerAdsPlugin\Exception;
 
 use RuntimeException;
+use function Safe\sprintf;
 
 final class InterfaceNotFoundException extends RuntimeException
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $interface;
 
     public function __construct(string $interface)

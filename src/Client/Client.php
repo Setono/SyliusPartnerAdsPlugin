@@ -12,19 +12,13 @@ use Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProviderInterface;
 
 final class Client implements ClientInterface
 {
-    /**
-     * @var HttpClientInterface
-     */
+    /** @var HttpClientInterface */
     private $httpClient;
 
-    /**
-     * @var RequestFactoryInterface
-     */
+    /** @var RequestFactoryInterface */
     private $requestFactory;
 
-    /**
-     * @var NotifyUrlProviderInterface
-     */
+    /** @var NotifyUrlProviderInterface */
     private $notifyUrlProvider;
 
     public function __construct(
@@ -51,11 +45,6 @@ final class Client implements ClientInterface
     }
 
     /**
-     * @param string $method
-     * @param string $url
-     *
-     * @return string
-     *
      * @throws ClientExceptionInterface
      * @throws RequestFailedException
      */

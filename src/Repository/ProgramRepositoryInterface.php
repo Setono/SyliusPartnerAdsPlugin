@@ -12,10 +12,6 @@ interface ProgramRepositoryInterface extends RepositoryInterface
 {
     /**
      * Returns the program that is enabled on the given channel or null if no account is enabled for the given channel
-     *
-     * @param ChannelInterface $channel
-     *
-     * @return ProgramInterface|null
      */
     public function findOneByChannel(ChannelInterface $channel): ?ProgramInterface;
 }

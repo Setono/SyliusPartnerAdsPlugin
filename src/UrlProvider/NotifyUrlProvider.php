@@ -8,9 +8,7 @@ use Setono\SyliusPartnerAdsPlugin\Exception\MissingVariableInUrlException;
 
 final class NotifyUrlProvider implements NotifyUrlProviderInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $url;
 
     public function __construct(string $url)
@@ -23,7 +21,7 @@ final class NotifyUrlProvider implements NotifyUrlProviderInterface
         $variables = ['{program_id}', '{partner_id}', '{ip}', '{order_id}', '{value}'];
 
         foreach ($variables as $variable) {
-            if (strpos($this->url, $variable) === false) {
+            if (mb_strpos($this->url, $variable) === false) {
                 throw new MissingVariableInUrlException($this->url, $variable);
             }
         }

@@ -10,8 +10,6 @@ interface ProgramContextInterface
 {
     /**
      * Returns the program enabled for the active channel
-     *
-     * @return ProgramInterface|null
      */
     public function getProgram(): ?ProgramInterface;
 }

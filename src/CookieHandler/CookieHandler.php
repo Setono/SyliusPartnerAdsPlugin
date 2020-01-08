@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\CookieHandler;
 
+use function Safe\sprintf;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CookieHandler implements CookieHandlerInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $cookieName;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $expire;
 
     public function __construct(string $cookieName, int $expire)
