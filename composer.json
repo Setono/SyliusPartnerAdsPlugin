@@ -65,14 +65,14 @@
     },
     "prefer-stable": true,
     "scripts": {
-        "analyse": [
-            "vendor/bin/phpstan analyse -c phpstan.neon -l max src --ansi"
-        ],
+        "analyse": "vendor/bin/phpstan analyse -c phpstan.neon -l max src --ansi",
         "check-style": "vendor/bin/ecs check src/ spec/ --ansi",
         "fix-style": "vendor/bin/ecs check --fix src/ spec/ --ansi",
+        "phpspec": "vendor/bin/phpspec run",
+        "phpunit": "vendor/bin/phpunit",
         "test": [
-            "vendor/bin/phpunit",
-            "vendor/bin/phpspec run"
+            "@phpunit",
+            "@phpspec"
         ]
     }
 }
