@@ -1,0 +1,8 @@
+setono_sylius_partner_ads:
+    program:
+        program_id:
+            unique: Program-id'et er allerede i brug i et andet program.
+            not_blank: Program-id skal udfyldes.
+            greather_than: Program-id skal være større end {{ compared_value }}.
+        channel:
+            not_null: Du bedes vælge en kanal
