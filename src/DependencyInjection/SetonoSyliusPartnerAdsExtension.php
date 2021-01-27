@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
-use Exception;
 use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Symfony\Component\Config\FileLocator;
@@ -14,11 +13,6 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension implements PrependExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @throws Exception
-     */
     public function load(array $config, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration([], $container), $config);

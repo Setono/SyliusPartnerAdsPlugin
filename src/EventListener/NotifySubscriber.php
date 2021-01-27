@@ -16,20 +16,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class NotifySubscriber implements EventSubscriberInterface
 {
-    /** @var MessageBusInterface */
-    private $messageBus;
+    private MessageBusInterface $messageBus;
 
-    /** @var CookieHandlerInterface */
-    private $cookieHandler;
+    private CookieHandlerInterface $cookieHandler;
 
-    /** @var OrderTotalCalculatorInterface */
-    private $orderTotalCalculator;
+    private OrderTotalCalculatorInterface $orderTotalCalculator;
 
-    /** @var ProgramContextInterface */
-    private $programContext;
+    private ProgramContextInterface $programContext;
 
-    /** @var RequestStack */
-    private $requestStack;
+    private RequestStack $requestStack;
 
     public function __construct(
         MessageBusInterface $messageBus,

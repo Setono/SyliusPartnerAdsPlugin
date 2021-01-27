@@ -11,14 +11,11 @@ class Program implements ProgramInterface
 {
     use ToggleableTrait;
 
-    /** @var int */
-    protected $id;
+    protected int $id;
 
-    /** @var int */
-    protected $programId;
+    protected int $programId;
 
-    /** @var ChannelInterface|null */
-    protected $channel;
+    protected ?ChannelInterface $channel = null;
 
     public function getId(): ?int
     {

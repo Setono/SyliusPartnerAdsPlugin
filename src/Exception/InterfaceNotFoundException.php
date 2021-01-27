@@ -9,8 +9,7 @@ use function Safe\sprintf;
 
 final class InterfaceNotFoundException extends RuntimeException
 {
-    /** @var string */
-    private $interface;
+    private string $interface;
 
     public function __construct(string $interface)
     {

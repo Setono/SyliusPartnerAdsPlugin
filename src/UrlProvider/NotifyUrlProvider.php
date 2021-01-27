@@ -8,8 +8,7 @@ use Setono\SyliusPartnerAdsPlugin\Exception\MissingVariableInUrlException;
 
 final class NotifyUrlProvider implements NotifyUrlProviderInterface
 {
-    /** @var string */
-    private $url;
+    private string $url;
 
     public function __construct(string $url)
     {
