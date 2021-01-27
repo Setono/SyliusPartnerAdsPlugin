@@ -9,11 +9,9 @@ use function Safe\sprintf;
 
 final class MissingVariableInUrlException extends InvalidArgumentException
 {
-    /** @var string */
-    private $url;
+    private string $url;
 
-    /** @var string */
-    private $missingVariable;
+    private string $missingVariable;
 
     public function __construct(string $url, string $missingVariable)
     {

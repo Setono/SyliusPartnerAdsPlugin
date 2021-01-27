@@ -12,14 +12,11 @@ use Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProviderInterface;
 
 final class Client implements ClientInterface
 {
-    /** @var HttpClientInterface */
-    private $httpClient;
+    private HttpClientInterface $httpClient;
 
-    /** @var RequestFactoryInterface */
-    private $requestFactory;
+    private RequestFactoryInterface $requestFactory;
 
-    /** @var NotifyUrlProviderInterface */
-    private $notifyUrlProvider;
+    private NotifyUrlProviderInterface $notifyUrlProvider;
 
     public function __construct(
         HttpClientInterface $httpClient,
@@ -31,12 +28,6 @@ final class Client implements ClientInterface
         $this->notifyUrlProvider = $notifyUrlProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws ClientExceptionInterface
-     * @throws RequestFailedException
-     */
     public function notify(int $programId, string $orderId, float $total, int $partnerId, string $ip): void
     {
         $url = $this->notifyUrlProvider->provide($programId, $orderId, $total, $partnerId, $ip);
@@ -44,10 +35,6 @@ final class Client implements ClientInterface
         $this->sendRequest('GET', $url);
     }
 
-    /**
-     * @throws ClientExceptionInterface
-     * @throws RequestFailedException
-     */
     private function sendRequest(string $method, string $url): string
     {
         $request = $this->requestFactory->createRequest($method, $url);

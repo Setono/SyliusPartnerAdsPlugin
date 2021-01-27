@@ -21,18 +21,10 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        if (method_exists(TreeBuilder::class, 'getRootNode')) {
-            $treeBuilder = new TreeBuilder('setono_sylius_partner_ads');
+        $treeBuilder = new TreeBuilder('setono_sylius_partner_ads');
 
-            /** @var ArrayNodeDefinition $rootNode */
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // BC layer for <= SF 4.1
-            $treeBuilder = new TreeBuilder();
-
-            /** @var ArrayNodeDefinition $rootNode */
-            $rootNode = $treeBuilder->root('setono_sylius_partner_ads');
-        }
+        /** @var ArrayNodeDefinition $rootNode */
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->addDefaultsIfNotSet()
@@ -50,7 +42,6 @@ final class Configuration implements ConfigurationInterface
                                     ->addDefaultsIfNotSet()
                                     ->children()
                                         ->scalarNode('model')->defaultValue(Program::class)->cannotBeEmpty()->end()
-                                        ->scalarNode('interface')->defaultValue(ProgramInterface::class)->cannotBeEmpty()->end()
                                         ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
                                         ->scalarNode('repository')->defaultValue(ProgramRepository::class)->cannotBeEmpty()->end()
                                         ->scalarNode('factory')->defaultValue(Factory::class)->end()

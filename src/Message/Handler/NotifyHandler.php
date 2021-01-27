@@ -9,8 +9,7 @@ use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
 
 final class NotifyHandler
 {
-    /** @var ClientInterface */
-    private $client;
+    private ClientInterface $client;
 
     public function __construct(ClientInterface $client)
     {

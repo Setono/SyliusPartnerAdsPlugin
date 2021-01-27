@@ -11,11 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CookieHandler implements CookieHandlerInterface
 {
-    /** @var string */
-    private $cookieName;
+    private string $cookieName;
 
-    /** @var int */
-    private $expire;
+    private int $expire;
 
     public function __construct(string $cookieName, int $expire)
     {

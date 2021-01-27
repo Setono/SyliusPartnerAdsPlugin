@@ -11,14 +11,11 @@ use function Safe\sprintf;
 
 final class RequestFailedException extends RuntimeException
 {
-    /** @var RequestInterface */
-    private $request;
+    private RequestInterface $request;
 
-    /** @var ResponseInterface */
-    private $response;
+    private ResponseInterface $response;
 
-    /** @var int */
-    private $statusCode;
+    private int $statusCode;
 
     public function __construct(RequestInterface $request, ResponseInterface $response, int $statusCode)
     {

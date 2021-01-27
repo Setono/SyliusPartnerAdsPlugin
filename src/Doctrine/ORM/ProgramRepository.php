@@ -12,11 +12,6 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 
 class ProgramRepository extends EntityRepository implements ProgramRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @throws NonUniqueResultException
-     */
     public function findOneByChannel(ChannelInterface $channel): ?ProgramInterface
     {
         return $this->createQueryBuilder('o')

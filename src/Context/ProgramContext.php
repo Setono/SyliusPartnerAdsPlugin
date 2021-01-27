@@ -10,11 +10,9 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 
 final class ProgramContext implements ProgramContextInterface
 {
-    /** @var ChannelContextInterface */
-    private $channelContext;
+    private ChannelContextInterface $channelContext;
 
-    /** @var ProgramRepositoryInterface */
-    private $programRepository;
+    private ProgramRepositoryInterface $programRepository;
 
     public function __construct(ChannelContextInterface $channelContext, ProgramRepositoryInterface $programRepository)
     {
