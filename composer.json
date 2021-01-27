@@ -29,10 +29,10 @@
     },
     "require-dev": {
         "kriswallsmith/buzz": "^1.0",
-        "matthiasnoback/symfony-config-test": "^4.1",
-        "matthiasnoback/symfony-dependency-injection-test": "^4.1",
+        "matthiasnoback/symfony-config-test": "^4.2",
+        "matthiasnoback/symfony-dependency-injection-test": "^4.2",
         "phpspec/phpspec": "^6.3",
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^9.3",
         "roave/security-advisories": "dev-master",
         "setono/code-quality-pack": "^1.5",
         "sylius/sylius": "~1.7.0",
