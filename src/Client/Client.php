@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Client;
 
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Setono\SyliusPartnerAdsPlugin\Exception\RequestFailedException;

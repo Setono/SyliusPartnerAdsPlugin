@@ -8,7 +8,6 @@ use Buzz\Client\BuzzClientInterface;
 use Setono\SyliusPartnerAdsPlugin\Doctrine\ORM\ProgramRepository;
 use Setono\SyliusPartnerAdsPlugin\Form\Type\ProgramType;
 use Setono\SyliusPartnerAdsPlugin\Model\Program;
-use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;

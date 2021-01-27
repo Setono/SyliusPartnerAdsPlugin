@@ -67,7 +67,7 @@
     },
     "prefer-stable": true,
     "scripts": {
-        "analyse": "phpstan analyse -c phpstan.neon -l max src --ansi",
+        "analyse": "phpstan analyse",
         "check-style": "ecs check src/ spec/ --ansi",
         "fix-style": "ecs check --fix src/ spec/ --ansi",
         "phpspec": "phpspec run",
