@@ -23,6 +23,7 @@ final class RegisterHttpClientPass implements CompilerPassInterface
 
         $httpClientServiceId = 'setono_sylius_partner_ads.http_client';
 
+        /** @var string|null $httpClientServiceIdParam */
         $httpClientServiceIdParam = $container->getParameter('setono_sylius_partner_ads.http_client');
         if (null === $httpClientServiceIdParam) {
             if (!interface_exists(BuzzClientInterface::class)) {

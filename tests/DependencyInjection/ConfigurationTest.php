@@ -27,9 +27,9 @@ final class ConfigurationTest extends TestCase
                 'query_parameter' => 'paid',
                 'cookie' => [
                     'name' => 'setono_sylius_partner_ads_cookie',
-                    'expire' => 40
+                    'expire' => 40,
                 ],
-            ]
+            ],
         ]);
     }
 }

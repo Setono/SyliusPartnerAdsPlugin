@@ -6,7 +6,7 @@ namespace Setono\SyliusPartnerAdsPlugin\EventListener;
 
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class SetCookieSubscriber implements EventSubscriberInterface
@@ -30,7 +30,7 @@ final class SetCookieSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function setCookie(FilterResponseEvent $event): void
+    public function setCookie(ResponseEvent $event): void
     {
         if (!$event->isMasterRequest()) {
             return;

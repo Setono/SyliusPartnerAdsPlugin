@@ -16,6 +16,7 @@ final class RegisterCommandBusPass implements CompilerPassInterface
             return;
         }
 
+        /** @var string $commandBusId */
         $commandBusId = $container->getParameter('setono_sylius_partner_ads.messenger.command_bus');
 
         if (!$container->has($commandBusId)) {

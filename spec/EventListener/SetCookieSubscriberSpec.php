@@ -10,7 +10,7 @@ use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
 use Setono\SyliusPartnerAdsPlugin\EventListener\SetCookieSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class SetCookieSubscriberSpec extends ObjectBehavior
 {
@@ -26,7 +26,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         $this->shouldHaveType(SetCookieSubscriber::class);
     }
 
-    public function it_does_not_do_anything_when_not_master_request(FilterResponseEvent $event): void
+    public function it_does_not_do_anything_when_not_master_request(ResponseEvent $event): void
     {
         $event->isMasterRequest()->willReturn(false);
         $event->getRequest()->shouldNotBeCalled();
@@ -34,7 +34,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         $this->setCookie($event);
     }
 
-    public function it_does_not_do_anything_when_xml_request(FilterResponseEvent $event, Request $request, CookieHandlerInterface $cookieHandler): void
+    public function it_does_not_do_anything_when_xml_request(ResponseEvent $event, Request $request, CookieHandlerInterface $cookieHandler): void
     {
         $request->isXmlHttpRequest()->willReturn(true);
 
@@ -46,7 +46,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         $this->setCookie($event);
     }
 
-    public function it_does_not_do_anything_when_query_param_is_not_set(FilterResponseEvent $event, CookieHandlerInterface $cookieHandler): void
+    public function it_does_not_do_anything_when_query_param_is_not_set(ResponseEvent $event, CookieHandlerInterface $cookieHandler): void
     {
         $request = new Request();
 
@@ -58,7 +58,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         $this->setCookie($event);
     }
 
-    public function it_sets(FilterResponseEvent $event, CookieHandlerInterface $cookieHandler): void
+    public function it_sets(ResponseEvent $event, CookieHandlerInterface $cookieHandler): void
     {
         $request = new Request([
             $this->param => '123',

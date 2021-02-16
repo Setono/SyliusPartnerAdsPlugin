@@ -33,6 +33,7 @@
         "matthiasnoback/symfony-dependency-injection-test": "^4.2",
         "phpspec/phpspec": "^6.3",
         "phpunit/phpunit": "^9.5",
+        "psalm/plugin-symfony": "^2.1",
         "roave/security-advisories": "dev-master",
         "setono/code-quality-pack": "^1.5.1",
         "sylius/sylius": "~1.7.0",
@@ -65,10 +66,13 @@
     },
     "prefer-stable": true,
     "scripts": {
-        "analyse": "phpstan analyse",
-        "check-style": "ecs check src/ spec/ --ansi",
-        "fix-style": "ecs check --fix src/ spec/ --ansi",
-        "phpspec": "phpspec run",
+        "analyse": [
+            "@ensure-test-container-exists",
+            "psalm"
+        ],
+        "check-style": "ecs check src/ tests/ spec/",
+        "ensure-test-container-exists": "[[ -f tests/Application/var/cache/test/ApplicationTests_Setono_SyliusPartnerAdsPlugin_Application_KernelTestDebugContainer.xml ]] || tests/Application/bin/console cache:warmup --env=test",
+        "fix-style": "ecs check src/ tests/ spec/ --fix",
         "phpunit": "phpunit"
     }
 }

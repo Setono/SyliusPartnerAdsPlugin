@@ -12,7 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 final class CookieHandlerTest extends TestCase
 {
     private $name = 'name';
+
     private $expire = 40;
+
     private $partnerId = 1234;
 
     /**
@@ -103,7 +105,7 @@ final class CookieHandlerTest extends TestCase
     private function createRequest(string $name = null): Request
     {
         return new Request([], [], [], [
-            $name ?? $this->name => $this->partnerId
+            $name ?? $this->name => $this->partnerId,
         ]);
     }
 }

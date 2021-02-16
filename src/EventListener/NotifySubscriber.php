@@ -73,7 +73,7 @@ final class NotifySubscriber implements EventSubscriberInterface
         }
 
         $this->messageBus->dispatch(new Notify(
-            $program->getProgramId(),
+            (int) $program->getProgramId(),
             (string) $order->getNumber(),
             $this->orderTotalCalculator->get($order),
             $this->cookieHandler->get($request),

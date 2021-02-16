@@ -11,9 +11,9 @@ class Program implements ProgramInterface
 {
     use ToggleableTrait;
 
-    protected int $id;
+    protected ?int $id = null;
 
-    protected int $programId;
+    protected ?int $programId = null;
 
     protected ?ChannelInterface $channel = null;
 
