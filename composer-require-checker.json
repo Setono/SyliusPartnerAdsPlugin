@@ -23,6 +23,7 @@
     "Sylius\\Component\\Channel\\Context\\ChannelContextInterface",
     "Sylius\\Component\\Channel\\Model\\ChannelAwareInterface",
     "Sylius\\Component\\Channel\\Model\\ChannelInterface",
-    "Sylius\\Component\\Core\\Model\\OrderInterface"
+    "Sylius\\Component\\Core\\Model\\OrderInterface",
+    "Sylius\\Component\\Order\\Repository\\OrderRepositoryInterface"
   ]
 }
