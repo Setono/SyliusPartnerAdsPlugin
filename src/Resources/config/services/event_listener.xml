@@ -7,7 +7,7 @@
             <argument type="service" id="setono_sylius_partner_ads.cookie_handler.default"/>
             <argument type="service" id="setono_sylius_partner_ads.calculator.order_total"/>
             <argument type="service" id="setono_sylius_partner_ads.context.program"/>
-            <argument type="service" id="request_stack"/>
+            <argument type="service" id="sylius.repository.order"/>
             <tag name="kernel.event_subscriber"/>
         </service>
 
