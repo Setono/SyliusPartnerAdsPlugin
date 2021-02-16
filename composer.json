@@ -73,6 +73,7 @@
         "check-style": "ecs check src/ tests/ spec/",
         "ensure-test-container-exists": "[[ -f tests/Application/var/cache/test/ApplicationTests_Setono_SyliusPartnerAdsPlugin_Application_KernelTestDebugContainer.xml ]] || tests/Application/bin/console cache:warmup --env=test",
         "fix-style": "ecs check src/ tests/ spec/ --fix",
+        "phpspec": "phpspec",
         "phpunit": "phpunit"
     }
 }
