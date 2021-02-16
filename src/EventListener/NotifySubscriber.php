@@ -8,10 +8,11 @@ use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
 use Setono\SyliusPartnerAdsPlugin\Context\ProgramContextInterface;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
 use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
-use Sylius\Bundle\ResourceBundle\Event\ResourceControllerEvent;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class NotifySubscriber implements EventSubscriberInterface
@@ -24,41 +25,56 @@ final class NotifySubscriber implements EventSubscriberInterface
 
     private ProgramContextInterface $programContext;
 
-    private RequestStack $requestStack;
+    private OrderRepositoryInterface $orderRepository;
 
     public function __construct(
         MessageBusInterface $messageBus,
         CookieHandlerInterface $cookieHandler,
         OrderTotalCalculatorInterface $orderTotalCalculator,
         ProgramContextInterface $programContext,
-        RequestStack $requestStack
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->messageBus = $messageBus;
         $this->cookieHandler = $cookieHandler;
         $this->orderTotalCalculator = $orderTotalCalculator;
         $this->programContext = $programContext;
-        $this->requestStack = $requestStack;
+        $this->orderRepository = $orderRepository;
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
-            'sylius.order.post_complete' => [
-                'notify',
-            ],
+            KernelEvents::REQUEST => 'notify',
         ];
     }
 
-    public function notify(ResourceControllerEvent $event): void
+    public function notify(RequestEvent $event): void
     {
-        $order = $event->getSubject();
+        $request = $event->getRequest();
 
-        if (!$order instanceof OrderInterface) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
-        $request = $this->requestStack->getMasterRequest();
-        if (null === $request) {
+        if (!$request->attributes->has('_route')) {
+            return;
+        }
+
+        $route = $request->attributes->get('_route');
+        if ('sylius_shop_order_thank_you' !== $route) {
+            return;
+        }
+
+        /** @var int|null $orderId */
+        $orderId = $request->getSession()->get('sylius_order_id');
+
+        if (null === $orderId) {
+            return;
+        }
+
+        /** @var OrderInterface|null $order */
+        $order = $this->orderRepository->find($orderId);
+        if (null === $order) {
             return;
         }
 
