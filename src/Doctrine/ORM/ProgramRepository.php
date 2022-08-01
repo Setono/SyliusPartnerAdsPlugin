@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Doctrine\ORM;
 
+use Doctrine\DBAL\Types\Types;
 use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
 use Setono\SyliusPartnerAdsPlugin\Repository\ProgramRepositoryInterface;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
@@ -17,7 +18,7 @@ class ProgramRepository extends EntityRepository implements ProgramRepositoryInt
         $obj = $this->createQueryBuilder('o')
             ->andWhere('o.channel = :channel')
             ->andWhere('o.enabled = true')
-            ->setParameter('channel', $channel)
+            ->setParameter('channel', $channel, Types::OBJECT)
             ->getQuery()
             ->getOneOrNullResult()
         ;

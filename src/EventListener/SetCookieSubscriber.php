@@ -32,7 +32,7 @@ final class SetCookieSubscriber implements EventSubscriberInterface
 
     public function setCookie(ResponseEvent $event): void
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

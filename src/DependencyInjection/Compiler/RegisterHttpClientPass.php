@@ -17,7 +17,7 @@ final class RegisterHttpClientPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasParameter('setono_sylius_partner_ads.http_client')) {
+        if (! $container->hasParameter('setono_sylius_partner_ads.http_client')) {
             return;
         }
 
@@ -26,7 +26,7 @@ final class RegisterHttpClientPass implements CompilerPassInterface
         /** @var string|null $httpClientServiceIdParam */
         $httpClientServiceIdParam = $container->getParameter('setono_sylius_partner_ads.http_client');
         if (null === $httpClientServiceIdParam) {
-            if (!interface_exists(BuzzClientInterface::class)) {
+            if (! interface_exists(BuzzClientInterface::class)) {
                 throw new InterfaceNotFoundException(BuzzClientInterface::class);
             }
 
@@ -35,7 +35,7 @@ final class RegisterHttpClientPass implements CompilerPassInterface
             ]);
             $container->setDefinition($httpClientServiceId, $definition);
         } else {
-            if (!$container->has($httpClientServiceIdParam)) {
+            if (! $container->has($httpClientServiceIdParam)) {
                 throw new ServiceNotFoundException($httpClientServiceIdParam);
             }
             $container->setAlias($httpClientServiceId, $httpClientServiceIdParam);

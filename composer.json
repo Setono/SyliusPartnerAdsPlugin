@@ -1,16 +1,16 @@
 {
     "name": "setono/sylius-partner-ads-plugin",
-    "type": "sylius-plugin",
     "description": "Sylius plugin that integrates Partner Ads tracking.",
+    "license": "MIT",
+    "type": "sylius-plugin",
     "keywords": [
         "sylius",
         "sylius-plugin",
         "partner ads",
         "setono"
     ],
-    "license": "MIT",
     "require": {
-        "php": "^7.4",
+        "php": "^7.4 || ^8.0",
         "ext-mbstring": "*",
         "knplabs/knp-menu": "^3.1",
         "psr/http-client": "^1.0",
@@ -35,8 +35,9 @@
         "phpunit/phpunit": "^9.5",
         "psalm/plugin-symfony": "^2.1",
         "roave/security-advisories": "dev-master",
-        "setono/code-quality-pack": "^1.5.1",
-        "sylius/sylius": "~1.7.0",
+        "sensiolabs/security-checker": "^6.0",
+        "setono/code-quality-pack": "^2.2",
+        "sylius/sylius": "~1.11.0",
         "symfony/debug-bundle": "^4.4 || ^5.0",
         "symfony/doctrine-messenger": "^5.2",
         "symfony/dotenv": "^4.4 || ^5.0",
@@ -44,14 +45,7 @@
         "symfony/serializer-pack": "^1.0",
         "symfony/web-profiler-bundle": "^4.4 || ^5.0"
     },
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.1-dev"
-        }
-    },
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Setono\\SyliusPartnerAdsPlugin\\": "src/"
@@ -65,7 +59,20 @@
             "tests/Application/Kernel.php"
         ]
     },
-    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true,
+            "ergebnis/composer-normalize": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        }
+    },
     "scripts": {
         "analyse": [
             "@ensure-test-container-exists",

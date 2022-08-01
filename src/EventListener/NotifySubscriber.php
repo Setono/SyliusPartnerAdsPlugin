@@ -52,7 +52,7 @@ final class NotifySubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
