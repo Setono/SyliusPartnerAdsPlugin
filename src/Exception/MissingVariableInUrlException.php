@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Setono\SyliusPartnerAdsPlugin\Exception;
 
 use InvalidArgumentException;
-use function Safe\sprintf;
 
 final class MissingVariableInUrlException extends InvalidArgumentException
 {
