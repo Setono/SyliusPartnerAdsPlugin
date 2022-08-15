@@ -20,7 +20,7 @@ final class Client implements ClientInterface
     public function __construct(
         HttpClientInterface $httpClient,
         RequestFactoryInterface $requestFactory,
-        NotifyUrlProviderInterface $notifyUrlProvider,
+        NotifyUrlProviderInterface $notifyUrlProvider
     ) {
         $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;

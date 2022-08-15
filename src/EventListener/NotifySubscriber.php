@@ -35,7 +35,7 @@ final class NotifySubscriber implements EventSubscriberInterface
         CookieHandlerInterface $cookieHandler,
         OrderTotalCalculatorInterface $orderTotalCalculator,
         ProgramContextInterface $programContext,
-        OrderRepositoryInterface $orderRepository,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->messageBus = $messageBus;
         $this->cookieHandler = $cookieHandler;
