@@ -10,14 +10,10 @@ use Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProviderInterface;
 
 final class Client implements ClientInterface
 {
-    /**
-     * @var NotifyUrlProviderInterface
-     */
+    /** @var NotifyUrlProviderInterface */
     private $notifyUrlProvider;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
     public function __construct(NotifyUrlProviderInterface $notifyUrlProvider, LoggerInterface $logger)

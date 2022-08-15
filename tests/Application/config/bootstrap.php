@@ -11,7 +11,7 @@ require dirname(__DIR__) . '../../../vendor/autoload.php';
 if (is_array($env = @include dirname(__DIR__) . '/.env.local.php')) {
     $_SERVER += $env;
     $_ENV += $env;
-} elseif (! class_exists(Dotenv::class)) {
+} elseif (!class_exists(Dotenv::class)) {
     throw new RuntimeException('Please run "composer require symfony/dotenv" to load the ".env" files configuring the application.');
 } else {
     // load all the .env files

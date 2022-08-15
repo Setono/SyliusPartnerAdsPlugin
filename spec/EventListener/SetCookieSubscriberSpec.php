@@ -32,8 +32,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         HttpKernelInterface $kernel,
         Request $request,
         Response $response,
-    ): void
-    {
+    ): void {
         $event = new ResponseEvent($kernel->getWrappedObject(), $request->getWrappedObject(), HttpKernelInterface::SUB_REQUEST, $response->getWrappedObject());
 
         $request->isXmlHttpRequest()->shouldNotBeCalled();

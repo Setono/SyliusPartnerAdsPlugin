@@ -12,14 +12,14 @@ final class RegisterCommandBusPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (! $container->hasParameter('setono_sylius_partner_ads.messenger.command_bus')) {
+        if (!$container->hasParameter('setono_sylius_partner_ads.messenger.command_bus')) {
             return;
         }
 
         /** @var string $commandBusId */
         $commandBusId = $container->getParameter('setono_sylius_partner_ads.messenger.command_bus');
 
-        if (! $container->has($commandBusId)) {
+        if (!$container->has($commandBusId)) {
             throw new ServiceNotFoundException($commandBusId);
         }
 

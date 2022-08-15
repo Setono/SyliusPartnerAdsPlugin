@@ -39,7 +39,7 @@ class ClientSpec extends ObjectBehavior
         HttpClientInterface $httpClient,
         RequestFactoryInterface $requestFactory,
         RequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface $response,
     ): void {
         $requestFactory->createRequest('GET', $this->url)->willReturn($request);
 

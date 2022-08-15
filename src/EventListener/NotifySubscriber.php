@@ -32,7 +32,7 @@ final class NotifySubscriber implements EventSubscriberInterface
         CookieHandlerInterface $cookieHandler,
         OrderTotalCalculatorInterface $orderTotalCalculator,
         ProgramContextInterface $programContext,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
     ) {
         $this->messageBus = $messageBus;
         $this->cookieHandler = $cookieHandler;
@@ -93,7 +93,7 @@ final class NotifySubscriber implements EventSubscriberInterface
             (string) $order->getNumber(),
             $this->orderTotalCalculator->get($order),
             $this->cookieHandler->get($request),
-            (string) $request->getClientIp()
+            (string) $request->getClientIp(),
         ));
     }
 }
