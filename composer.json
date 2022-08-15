@@ -25,25 +25,24 @@
         "symfony/http-foundation": "^4.4 || ^5.4",
         "symfony/http-kernel": "^4.4 || ^5.4",
         "symfony/messenger": "^4.4 || ^5.4",
-        "webmozart/assert": "^1.4"
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
         "kriswallsmith/buzz": "^1.0",
-        "matthiasnoback/symfony-config-test": "^4.2",
-        "matthiasnoback/symfony-dependency-injection-test": "^4.2",
-        "phpspec/phpspec": "^7.0",
+        "matthiasnoback/symfony-config-test": "^4.3",
+        "matthiasnoback/symfony-dependency-injection-test": "^4.3",
+        "phpspec/phpspec": "^7.2",
         "phpunit/phpunit": "^9.5",
-        "psalm/plugin-symfony": "^2.1",
+        "psalm/plugin-symfony": "^3.0",
         "roave/security-advisories": "dev-latest",
-        "sensiolabs/security-checker": "^6.0",
         "setono/code-quality-pack": "^2.2",
         "sylius/sylius": "~1.11.7",
-        "symfony/debug-bundle": "^4.4 || ^5.0",
-        "symfony/doctrine-messenger": "^5.2",
-        "symfony/dotenv": "^4.4 || ^5.0",
-        "symfony/intl": "^4.4 || ^5.0",
+        "symfony/debug-bundle": "^4.4 || ^5.4",
+        "symfony/doctrine-messenger": "^4.4 || ^5.4",
+        "symfony/dotenv": "^4.4 || ^5.4",
+        "symfony/intl": "^4.4 || ^5.4",
         "symfony/serializer-pack": "^1.0",
-        "symfony/web-profiler-bundle": "^4.4 || ^5.0"
+        "symfony/web-profiler-bundle": "^4.4 || ^5.4"
     },
     "prefer-stable": true,
     "autoload": {
