@@ -16,6 +16,7 @@
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0",
+        "setono/symfony-main-request-trait": "^1.0",
         "sylius/resource-bundle": "^1.6",
         "symfony/config": "^4.4 || ^5.4",
         "symfony/dependency-injection": "^4.4 || ^5.4",

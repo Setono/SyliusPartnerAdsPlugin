@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Doctrine\ORM;
 
-use Doctrine\DBAL\Types\Types;
 use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
 use Setono\SyliusPartnerAdsPlugin\Repository\ProgramRepositoryInterface;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
