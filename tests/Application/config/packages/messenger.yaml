@@ -2,5 +2,3 @@ framework:
     messenger:
         buses:
             message_bus: ~
-        transports:
-            amqp: '%env(MESSENGER_TRANSPORT_DSN)%'
