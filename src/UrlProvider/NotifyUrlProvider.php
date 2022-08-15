@@ -28,7 +28,7 @@ final class NotifyUrlProvider implements NotifyUrlProviderInterface
         return str_replace(
             ['{program_id}', '{partner_id}', '{ip}', '{order_id}', '{value}'],
             [$programId, $partnerId, $ip, $orderId, $value],
-            $this->url,
+            $this->url
         );
     }
 }
