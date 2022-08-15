@@ -18,9 +18,21 @@ class OrderTotalCalculatorSpec extends ObjectBehavior
     public function it_returns_correct_total(OrderInterface $order): void
     {
         $tests = [
-            ['total' => 0, 'shipping' => 0, 'expected' => 0.0],
-            ['total' => 10, 'shipping' => 9, 'expected' => 0.01],
-            ['total' => 123456, 'shipping' => 1245, 'expected' => 1222.11],
+            [
+                'total' => 0,
+                'shipping' => 0,
+                'expected' => 0.0,
+            ],
+            [
+                'total' => 10,
+                'shipping' => 9,
+                'expected' => 0.01,
+            ],
+            [
+                'total' => 123456,
+                'shipping' => 1245,
+                'expected' => 1222.11,
+            ],
         ];
 
         foreach ($tests as $test) {

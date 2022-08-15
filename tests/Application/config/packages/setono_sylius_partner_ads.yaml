@@ -1,3 +1,6 @@
+imports:
+    - { resource: "@SetonoSyliusPartnerAdsPlugin/Resources/config/app/config.yaml" }
+
 setono_sylius_partner_ads:
     urls:
         notify: http://127.0.0.1:8000/callback.php?programid={program_id}&type=salg&partnerid={partner_id}&userip={ip}&ordreid={order_id}&varenummer=x&antal=1&omprsalg={value}

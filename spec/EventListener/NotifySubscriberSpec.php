@@ -58,7 +58,7 @@ class NotifySubscriberSpec extends ObjectBehavior
     ): void {
         $request = self::getRequest();
         $event->getRequest()->willReturn($request);
-        $event->isMasterRequest()->willReturn(true);
+        $event->isMainRequest()->willReturn(true);
 
         $orderRepository->find(123)->willReturn($order);
 
@@ -79,47 +79,38 @@ class NotifySubscriberSpec extends ObjectBehavior
         $session = new class() implements SessionInterface {
             public function start()
             {
-                // TODO: Implement start() method.
             }
 
             public function getId()
             {
-                // TODO: Implement getId() method.
             }
 
             public function setId($id)
             {
-                // TODO: Implement setId() method.
             }
 
             public function getName()
             {
-                // TODO: Implement getName() method.
             }
 
             public function setName($name)
             {
-                // TODO: Implement setName() method.
             }
 
             public function invalidate($lifetime = null)
             {
-                // TODO: Implement invalidate() method.
             }
 
             public function migrate($destroy = false, $lifetime = null)
             {
-                // TODO: Implement migrate() method.
             }
 
             public function save()
             {
-                // TODO: Implement save() method.
             }
 
             public function has($name)
             {
-                // TODO: Implement has() method.
             }
 
             public function get($name, $default = null)
@@ -129,47 +120,38 @@ class NotifySubscriberSpec extends ObjectBehavior
 
             public function set($name, $value)
             {
-                // TODO: Implement set() method.
             }
 
             public function all()
             {
-                // TODO: Implement all() method.
             }
 
             public function replace(array $attributes)
             {
-                // TODO: Implement replace() method.
             }
 
             public function remove($name)
             {
-                // TODO: Implement remove() method.
             }
 
             public function clear()
             {
-                // TODO: Implement clear() method.
             }
 
             public function isStarted()
             {
-                // TODO: Implement isStarted() method.
             }
 
             public function registerBag(SessionBagInterface $bag)
             {
-                // TODO: Implement registerBag() method.
             }
 
             public function getBag($name)
             {
-                // TODO: Implement getBag() method.
             }
 
             public function getMetadataBag()
             {
-                // TODO: Implement getMetadataBag() method.
             }
         };
 

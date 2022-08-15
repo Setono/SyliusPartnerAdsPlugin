@@ -11,7 +11,6 @@ use Setono\SyliusPartnerAdsPlugin\Model\Program;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -22,7 +21,6 @@ final class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('setono_sylius_partner_ads');
 
-        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
 
         /** @psalm-suppress MixedMethodCall,PossiblyNullReference,PossiblyUndefinedMethod */
@@ -112,7 +110,6 @@ final class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('http_client', 'scalar');
 
-        /** @var ScalarNodeDefinition $node */
         $node = $treeBuilder->getRootNode();
         $node
             ->cannotBeEmpty()

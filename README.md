@@ -1,10 +1,8 @@
 # Sylius Partner Ads Plugin
 
 [![Latest Version][ico-version]][link-packagist]
-[![Latest Unstable Version][ico-unstable-version]][link-packagist]
 [![Software License][ico-license]](LICENSE)
 [![Build Status][ico-github-actions]][link-github-actions]
-[![Quality Score][ico-code-quality]][link-code-quality]
 
 This plugin will track sales made by Partner Ads affiliates.
 
@@ -117,11 +115,8 @@ After this the Messenger will be automatically enabled in this plugin and subseq
 For testing purposes you can sign up for a free RabbitMQ cloud service here: [CloudAMQP](https://www.cloudamqp.com/plans.html).
 
 [ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
-[ico-unstable-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/unstable
 [ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license
 [ico-github-actions]: https://github.com/Setono/SyliusPartnerAdsPlugin/workflows/build/badge.svg
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/Setono/SyliusPartnerAdsPlugin.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/setono/sylius-partner-ads-plugin
 [link-github-actions]: https://github.com/Setono/SyliusPartnerAdsPlugin/actions
-[link-code-quality]: https://scrutinizer-ci.com/g/Setono/SyliusPartnerAdsPlugin

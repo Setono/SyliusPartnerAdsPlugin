@@ -7,7 +7,6 @@ namespace Setono\SyliusPartnerAdsPlugin\Exception;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use function Safe\sprintf;
 
 final class RequestFailedException extends RuntimeException
 {

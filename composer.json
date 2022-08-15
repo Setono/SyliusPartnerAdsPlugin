@@ -1,57 +1,54 @@
 {
     "name": "setono/sylius-partner-ads-plugin",
-    "type": "sylius-plugin",
     "description": "Sylius plugin that integrates Partner Ads tracking.",
+    "license": "MIT",
+    "type": "sylius-plugin",
     "keywords": [
         "sylius",
         "sylius-plugin",
         "partner ads",
         "setono"
     ],
-    "license": "MIT",
     "require": {
-        "php": "^7.4",
+        "php": ">=7.4",
         "ext-mbstring": "*",
         "knplabs/knp-menu": "^3.1",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0",
+        "setono/symfony-main-request-trait": "^1.0",
         "sylius/resource-bundle": "^1.6",
-        "symfony/config": "^4.4 || ^5.0",
-        "symfony/dependency-injection": "^4.4 || ^5.0",
-        "symfony/event-dispatcher": "^4.4 || ^5.0",
-        "symfony/form": "^4.4 || ^5.0",
-        "symfony/http-foundation": "^4.4 || ^5.0.7",
-        "symfony/http-kernel": "^4.4 || ^5.1.5",
-        "symfony/messenger": "^4.4 || ^5.0",
-        "thecodingmachine/safe": "^1.0",
-        "webmozart/assert": "^1.4"
+        "symfony/config": "^4.4 || ^5.4",
+        "symfony/dependency-injection": "^4.4 || ^5.4",
+        "symfony/event-dispatcher": "^4.4 || ^5.4",
+        "symfony/form": "^4.4 || ^5.4",
+        "symfony/http-foundation": "^4.4 || ^5.4",
+        "symfony/http-kernel": "^4.4 || ^5.4",
+        "symfony/messenger": "^4.4 || ^5.4",
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
+        "api-platform/core": "^2.6",
+        "friendsofsymfony/oauth-server-bundle": ">2.0.0-alpha.0 ^2.0@dev",
         "kriswallsmith/buzz": "^1.0",
-        "matthiasnoback/symfony-config-test": "^4.2",
-        "matthiasnoback/symfony-dependency-injection-test": "^4.2",
-        "phpspec/phpspec": "^7.0",
+        "lexik/jwt-authentication-bundle": "^2.15",
+        "matthiasnoback/symfony-config-test": "^4.3",
+        "matthiasnoback/symfony-dependency-injection-test": "^4.3",
+        "phpspec/phpspec": "^7.2",
         "phpunit/phpunit": "^9.5",
-        "psalm/plugin-symfony": "^2.1",
-        "roave/security-advisories": "dev-master",
-        "setono/code-quality-pack": "^1.5.1",
-        "sylius/sylius": "~1.7.0",
-        "symfony/debug-bundle": "^4.4 || ^5.0",
-        "symfony/doctrine-messenger": "^5.2",
-        "symfony/dotenv": "^4.4 || ^5.0",
-        "symfony/intl": "^4.4 || ^5.0",
+        "psalm/plugin-symfony": "^3.0",
+        "roave/security-advisories": "dev-latest",
+        "setono/code-quality-pack": "^2.2",
+        "sylius/admin-api-bundle": "^1.11",
+        "sylius/sylius": "~1.10.14",
+        "symfony/debug-bundle": "^4.4 || ^5.4",
+        "symfony/dotenv": "^4.4 || ^5.4",
+        "symfony/intl": "^4.4 || ^5.4",
         "symfony/serializer-pack": "^1.0",
-        "symfony/web-profiler-bundle": "^4.4 || ^5.0"
+        "symfony/web-profiler-bundle": "^4.4 || ^5.4",
+        "symfony/webpack-encore-bundle": "^1.14"
     },
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.1-dev"
-        }
-    },
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Setono\\SyliusPartnerAdsPlugin\\": "src/"
@@ -65,15 +62,27 @@
             "tests/Application/Kernel.php"
         ]
     },
-    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
+            "symfony/thanks": false
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        }
+    },
     "scripts": {
         "analyse": [
             "@ensure-test-container-exists",
             "psalm"
         ],
-        "check-style": "ecs check src/ tests/ spec/",
+        "check-style": "ecs check",
         "ensure-test-container-exists": "[[ -f tests/Application/var/cache/test/ApplicationTests_Setono_SyliusPartnerAdsPlugin_Application_KernelTestDebugContainer.xml ]] || tests/Application/bin/console cache:warmup --env=test",
-        "fix-style": "ecs check src/ tests/ spec/ --fix",
+        "fix-style": "ecs check --fix",
         "phpspec": "phpspec",
         "phpunit": "phpunit"
     }
