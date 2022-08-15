@@ -30,7 +30,7 @@ class NotifySubscriberSpec extends ObjectBehavior
         CookieHandlerInterface $cookieHandler,
         OrderTotalCalculatorInterface $orderTotalCalculator,
         ProgramContextInterface $programContext,
-        OrderRepositoryInterface $orderRepository,
+        OrderRepositoryInterface $orderRepository
     ): void {
         $this->beConstructedWith($messageBus, $cookieHandler, $orderTotalCalculator, $programContext, $orderRepository);
     }
@@ -54,7 +54,7 @@ class NotifySubscriberSpec extends ObjectBehavior
         ProgramInterface $program,
         MessageBusInterface $messageBus,
         StampInterface $stamp,
-        OrderRepositoryInterface $orderRepository,
+        OrderRepositoryInterface $orderRepository
     ): void {
         $request = self::getRequest();
         $event->getRequest()->willReturn($request);

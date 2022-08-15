@@ -31,7 +31,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
     public function it_does_not_do_anything_when_not_master_request(
         HttpKernelInterface $kernel,
         Request $request,
-        Response $response,
+        Response $response
     ): void {
         $event = new ResponseEvent($kernel->getWrappedObject(), $request->getWrappedObject(), HttpKernelInterface::SUB_REQUEST, $response->getWrappedObject());
 
@@ -44,7 +44,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         HttpKernelInterface $kernel,
         Request $request,
         Response $response,
-        CookieHandlerInterface $cookieHandler,
+        CookieHandlerInterface $cookieHandler
     ): void {
         $event = new ResponseEvent($kernel->getWrappedObject(), $request->getWrappedObject(), HttpKernelInterface::MAIN_REQUEST, $response->getWrappedObject());
         $request->isXmlHttpRequest()->willReturn(true);
@@ -59,7 +59,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         Request $request,
         Response $response,
         CookieHandlerInterface $cookieHandler,
-        ParameterBag $query,
+        ParameterBag $query
     ): void {
         $event = new ResponseEvent($kernel->getWrappedObject(), $request->getWrappedObject(), HttpKernelInterface::MAIN_REQUEST, $response->getWrappedObject());
         $request->isXmlHttpRequest()->willReturn(false);
@@ -76,7 +76,7 @@ class SetCookieSubscriberSpec extends ObjectBehavior
         Request $request,
         Response $response,
         CookieHandlerInterface $cookieHandler,
-        ParameterBag $query,
+        ParameterBag $query
     ): void {
         $event = new ResponseEvent($kernel->getWrappedObject(), $request->getWrappedObject(), HttpKernelInterface::MAIN_REQUEST, $response->getWrappedObject());
         $request->isXmlHttpRequest()->willReturn(false);
