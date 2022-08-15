@@ -18,7 +18,7 @@ class ProgramRepository extends EntityRepository implements ProgramRepositoryInt
         $obj = $this->createQueryBuilder('o')
             ->andWhere('o.channel = :channel')
             ->andWhere('o.enabled = true')
-            ->setParameter('channel', $channel, Types::OBJECT)
+            ->setParameter('channel', $channel)
             ->getQuery()
             ->getOneOrNullResult()
         ;
