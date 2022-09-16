@@ -12,13 +12,9 @@ It works by saving the affiliate partner id when the visitor visits any page on 
 
 ### Step 1: Download the plugin
 
-Open a command console, enter your project directory and execute the following command to download the latest stable version of this plugin:
-
 ```bash
-$ composer require setono/sylius-partner-ads-plugin
+composer require setono/sylius-partner-ads-plugin
 ```
-
-This command requires you to have Composer installed globally, as explained in the [installation chapter](https://getcomposer.org/doc/00-intro.md) of the Composer documentation.
 
 ### Step 2: Enable the plugin
 
