@@ -28,15 +28,15 @@
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
-        "api-platform/core": "^2.6",
+        "api-platform/core": "^2.7",
         "friendsofsymfony/oauth-server-bundle": ">2.0.0-alpha.0 ^2.0@dev",
-        "kriswallsmith/buzz": "^1.0",
-        "lexik/jwt-authentication-bundle": "^2.15",
+        "kriswallsmith/buzz": "^1.2",
+        "lexik/jwt-authentication-bundle": "^2.16",
         "matthiasnoback/symfony-config-test": "^4.3",
         "matthiasnoback/symfony-dependency-injection-test": "^4.3",
         "phpspec/phpspec": "^7.2",
         "phpunit/phpunit": "^9.5",
-        "psalm/plugin-symfony": "^3.0",
+        "psalm/plugin-symfony": "^3.1",
         "roave/security-advisories": "dev-latest",
         "setono/code-quality-pack": "^2.2",
         "sylius/admin-api-bundle": "^1.11",
@@ -46,7 +46,7 @@
         "symfony/intl": "^4.4 || ^5.4",
         "symfony/serializer-pack": "^1.0",
         "symfony/web-profiler-bundle": "^4.4 || ^5.4",
-        "symfony/webpack-encore-bundle": "^1.14"
+        "symfony/webpack-encore-bundle": "^1.15"
     },
     "prefer-stable": true,
     "autoload": {
