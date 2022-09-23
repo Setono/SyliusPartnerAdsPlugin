@@ -1,2 +1,7 @@
 imports:
     - "@SetonoSyliusPartnerAdsPlugin/Resources/config/grids/setono_sylius_partner_ads_admin_program.yaml"
+
+framework:
+    messenger:
+        buses:
+            setono_sylius_partner_ads.command_bus: ~

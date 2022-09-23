@@ -1,0 +1,3 @@
+setono_sylius_partner_ads_admin:
+    resource: routes/admin.yaml
+    prefix: /admin/partner-ads

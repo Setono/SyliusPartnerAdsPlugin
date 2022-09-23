@@ -11,7 +11,7 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 interface ProgramRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Returns the program that is enabled on the given channel or null if no account is enabled for the given channel
+     * Returns the program that is enabled on the given channel or null if no program is enabled for the given channel
      */
     public function findOneByChannel(ChannelInterface $channel): ?ProgramInterface;
 }

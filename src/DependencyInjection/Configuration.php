@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
-use Buzz\Client\BuzzClientInterface;
-use Setono\SyliusPartnerAdsPlugin\Doctrine\ORM\ProgramRepository;
 use Setono\SyliusPartnerAdsPlugin\Form\Type\ProgramType;
+use Setono\SyliusPartnerAdsPlugin\Model\AffiliateOrder;
 use Setono\SyliusPartnerAdsPlugin\Model\Program;
+use Setono\SyliusPartnerAdsPlugin\Repository\AffiliateOrderRepository;
+use Setono\SyliusPartnerAdsPlugin\Repository\ProgramRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
+use Sylius\Bundle\ResourceBundle\Form\Type\DefaultResourceType;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;
-use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -27,11 +28,26 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
-                ->append($this->addHttpClientNode())
                 ->scalarNode('driver')->defaultValue(SyliusResourceBundle::DRIVER_DOCTRINE_ORM)->cannotBeEmpty()->end()
                 ->arrayNode('resources')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('affiliate_order')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->variableNode('options')->end()
+                                ->arrayNode('classes')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->scalarNode('model')->defaultValue(AffiliateOrder::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('repository')->defaultValue(AffiliateOrderRepository::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('factory')->defaultValue(Factory::class)->end()
+                                        ->scalarNode('form')->defaultValue(DefaultResourceType::class)->cannotBeEmpty()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('program')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -50,16 +66,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('urls')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('notify')
-                            ->cannotBeEmpty()
-                            ->defaultValue('https://www.partner-ads.com/dk/leadtracks2s.php?programid={program_id}&type=salg&partnerid={partner_id}&userip={ip}&ordreid={order_id}&varenummer=x&antal=1&omprsalg={value}')
-                            ->info('The URL to use when notifying Partner Ads of a new order. Remember to include the variables')
-                        ->end()
-                    ->end()
-                ->end()
                 ->scalarNode('query_parameter')
                     ->cannotBeEmpty()
                     ->defaultValue('paid')
@@ -70,9 +76,9 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('name')
                             ->cannotBeEmpty()
-                            ->defaultValue('setono_sylius_partner_ads_cookie')
+                            ->defaultValue('sspa_affiliate')
                             ->example('partner_ads')
-                            ->info('The name of the cookie')
+                            ->info('The name of the cookie where the affiliate\'s id is saved')
                         ->end()
                         ->integerNode('expire')
                             ->min(0)
@@ -82,46 +88,9 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('messenger')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('command_bus')
-                            ->cannotBeEmpty()
-                            ->defaultValue('message_bus')
-                            ->example('message_bus')
-                            ->info('The service id for the message bus you use for commands')
-                        ->end()
-                        ->scalarNode('transport')
-                            ->cannotBeEmpty()
-                            ->defaultNull()
-                            ->info('The transport to use if you would like HTTP requests to be async (which is a very good choice on production)')
-                            ->example('amqp')
-                        ->end()
-                    ->end()
-
-                ->end()
             ->end()
         ;
 
         return $treeBuilder;
-    }
-
-    public function addHttpClientNode(): ScalarNodeDefinition
-    {
-        $treeBuilder = new TreeBuilder('http_client', 'scalar');
-
-        $node = $treeBuilder->getRootNode();
-        $node
-            ->cannotBeEmpty()
-            ->info('The service id for your PSR18 HTTP client')
-        ;
-
-        if (interface_exists(BuzzClientInterface::class)) {
-            $node->defaultNull();
-        } else {
-            $node->isRequired();
-        }
-
-        return $node;
     }
 }

@@ -8,10 +8,8 @@ use Sylius\Component\Core\Model\OrderInterface;
 
 final class OrderTotalCalculator implements OrderTotalCalculatorInterface
 {
-    public function get(OrderInterface $order): float
+    public function calculate(OrderInterface $order): int
     {
-        $orderTotal = $order->getTotal() - $order->getShippingTotal();
-
-        return round($orderTotal / 100, 2);
+        return $order->getTotal() - $order->getShippingTotal();
     }
 }
