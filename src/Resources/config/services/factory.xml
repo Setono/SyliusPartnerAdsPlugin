@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="setono_sylius_partner_ads.custom_factory.affiliate_order"
+                 class="Setono\SyliusPartnerAdsPlugin\Factory\AffiliateOrderFactory"
+                 decorates="setono_sylius_partner_ads.factory.affiliate_order" decoration-priority="64">
+            <argument type="service" id="setono_sylius_partner_ads.custom_factory.affiliate_order.inner"/>
+        </service>
+    </services>
+</container>

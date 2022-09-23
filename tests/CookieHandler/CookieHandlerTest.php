@@ -42,32 +42,12 @@ final class CookieHandlerTest extends TestCase
     /**
      * @test
      */
-    public function it_removes(): void
-    {
-        $response = new Response();
-        $cookieHandler = $this->createCookieHandler($response);
-
-        $cookieHandler->remove($response);
-
-        $cookies = $response->headers->getCookies();
-
-        $this->assertCount(1, $cookies);
-
-        $cookie = $cookies[0];
-
-        $this->assertSame($this->name, $cookie->getName());
-        $this->assertNull($cookie->getValue());
-    }
-
-    /**
-     * @test
-     */
     public function it_gets_the_value(): void
     {
         $cookieHandler = $this->createCookieHandler(new Response());
         $request = $this->createRequest();
 
-        $value = $cookieHandler->get($request);
+        $value = $cookieHandler->value($request);
 
         $this->assertSame($this->partnerId, $value);
     }
@@ -80,7 +60,7 @@ final class CookieHandlerTest extends TestCase
         $cookieHandler = $this->createCookieHandler(new Response());
         $request = $this->createRequest();
 
-        $this->assertTrue($cookieHandler->has($request));
+        $this->assertTrue($cookieHandler->isset($request));
     }
 
     /**
@@ -91,7 +71,7 @@ final class CookieHandlerTest extends TestCase
         $cookieHandler = $this->createCookieHandler(new Response());
         $request = $this->createRequest('doesnotexist');
 
-        $this->assertFalse($cookieHandler->has($request));
+        $this->assertFalse($cookieHandler->isset($request));
     }
 
     private function createCookieHandler(Response $response): CookieHandler

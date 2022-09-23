@@ -8,7 +8,7 @@ use Symplify\EasyCodingStandard\ValueObject\Option;
 return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->import('vendor/sylius-labs/coding-standard/ecs.php');
     $containerConfigurator->parameters()->set(Option::PATHS, [
-        'src', 'tests', 'spec'
+        'src', 'tests'
     ]);
     $containerConfigurator->parameters()->set(Option::SKIP, [
         'tests/Application/node_modules/**',

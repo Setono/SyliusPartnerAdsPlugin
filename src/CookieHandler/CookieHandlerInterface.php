@@ -15,17 +15,16 @@ interface CookieHandlerInterface
     public function set(Response $response, int $partnerId): void;
 
     /**
-     * Removes the cookie on the given response
+     * Returns the cookie value which is a Partner Ads partner id.
+     * If the request is null, it will use the main request from the request stack
+     *
+     * todo what if the cookie isn't set on the request?
      */
-    public function remove(Response $response): void;
+    public function value(Request $request = null): int;
 
     /**
-     * Returns the cookie value which is a Partner Ads partner id
+     * Returns true if the request has the cookie set.
+     * If the request is null, it will use the main request from the request stack
      */
-    public function get(Request $request): int;
-
-    /**
-     * Returns true if the request has the cookie set
-     */
-    public function has(Request $request): bool;
+    public function isset(Request $request = null): bool;
 }
