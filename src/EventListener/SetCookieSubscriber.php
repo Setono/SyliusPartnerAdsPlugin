@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\EventListener;
 
-use Setono\MainRequestTrait\MainRequestTrait;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -12,8 +11,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class SetCookieSubscriber implements EventSubscriberInterface
 {
-    use MainRequestTrait;
-
     private CookieHandlerInterface $cookieHandler;
 
     private string $queryParameter;
@@ -35,7 +32,7 @@ final class SetCookieSubscriber implements EventSubscriberInterface
 
     public function setCookie(ResponseEvent $event): void
     {
-        if (!$this->isMainRequest($event)) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

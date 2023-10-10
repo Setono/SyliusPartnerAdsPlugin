@@ -8,3 +8,6 @@
 /phpunit.xml.dist                export-ignore
 /psalm.xml                       export-ignore
 /README.md                       export-ignore
+/.editorconfig                   export-ignore
+/node_modules                    export-ignore
+/.github                         export-ignore

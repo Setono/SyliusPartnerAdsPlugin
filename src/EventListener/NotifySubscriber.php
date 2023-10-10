@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\EventListener;
 
-use Setono\MainRequestTrait\MainRequestTrait;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
 use Setono\SyliusPartnerAdsPlugin\Context\ProgramContextInterface;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
@@ -18,8 +17,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class NotifySubscriber implements EventSubscriberInterface
 {
-    use MainRequestTrait;
-
     private MessageBusInterface $messageBus;
 
     private CookieHandlerInterface $cookieHandler;
@@ -55,7 +52,7 @@ final class NotifySubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (!$this->isMainRequest($event)) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
