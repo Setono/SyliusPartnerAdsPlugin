@@ -77,7 +77,7 @@ final class Configuration implements ConfigurationInterface
                         ->integerNode('expire')
                             ->min(0)
                             ->defaultValue(40)
-                            ->example(40)
+                            ->example('40')
                             ->info('The number of days before the cookie expires. Partner Ads\' official docs says it should be 40')
                         ->end()
                     ->end()
