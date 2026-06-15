@@ -13,8 +13,13 @@ return (new Configuration())
     ->addPathToScan(__DIR__ . '/config', false)
     ->addPathToExclude(__DIR__ . '/tests')
     // Buzz is an optional PSR-18 client fallback referenced behind interface_exists()/class_exists()
-    // guards in the compiler pass and configuration, so it is intentionally a dev dependency.
+    // guards in the compiler pass and configuration, so it is intentionally a dev dependency and may
+    // not be installed at all when only production dependencies are analysed.
     ->ignoreErrorsOnPackage('kriswallsmith/buzz', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreUnknownClasses([
+        \Buzz\Client\BuzzClientInterface::class,
+        \Buzz\Client\Curl::class,
+    ])
     // The sylius/sylius metapackage (dev only) "replace"s the split sylius/* packages this plugin requires.
     // In this dev environment their classes therefore resolve to sylius/sylius, so the analyser reports
     // sylius/sylius as a shadow dependency and the split packages as unused. The split packages are the

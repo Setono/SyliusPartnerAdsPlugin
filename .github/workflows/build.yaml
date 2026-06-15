@@ -6,15 +6,15 @@ on:
     workflow_dispatch: ~
 
 jobs:
-    backwards-compatibility:
-        runs-on: "ubuntu-latest"
-        if: "github.event_name == 'pull_request'"
-        # Non-blocking for the 1.x -> 2.x major upgrade: there is no 2.0 baseline to compare against yet
-        # (and the pre-2.0 base branch can no longer be installed because of api-platform/core advisories).
-        # Re-enable blocking by removing this line once 2.0 has been released.
-        continue-on-error: true
-        steps:
-            -   uses: "setono/sylius-plugin/backwards-compatibility@v2"
+    # NOTE: the backwards-compatibility job has been removed for the 1.x -> 2.x major upgrade. There is no
+    # 2.0 baseline to compare against yet and a major release intentionally breaks BC. Re-add it once 2.0
+    # has been released:
+    #
+    #   backwards-compatibility:
+    #       runs-on: "ubuntu-latest"
+    #       if: "github.event_name == 'pull_request'"
+    #       steps:
+    #           -   uses: "setono/sylius-plugin/backwards-compatibility@v2"
 
     coding-standards:
         runs-on: "ubuntu-latest"
