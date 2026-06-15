@@ -23,7 +23,6 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->getRootNode();
 
-        /** @psalm-suppress MixedMethodCall,PossiblyNullReference,PossiblyUndefinedMethod,UndefinedInterfaceMethod */
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
@@ -87,8 +86,8 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('command_bus')
                             ->cannotBeEmpty()
-                            ->defaultValue('message_bus')
-                            ->example('message_bus')
+                            ->defaultValue('sylius.command_bus')
+                            ->example('sylius.command_bus')
                             ->info('The service id for the message bus you use for commands')
                         ->end()
                         ->scalarNode('transport')

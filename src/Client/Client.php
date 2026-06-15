@@ -9,22 +9,10 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Setono\SyliusPartnerAdsPlugin\Exception\RequestFailedException;
 use Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProviderInterface;
 
-final class Client implements ClientInterface
+final readonly class Client implements ClientInterface
 {
-    private HttpClientInterface $httpClient;
-
-    private RequestFactoryInterface $requestFactory;
-
-    private NotifyUrlProviderInterface $notifyUrlProvider;
-
-    public function __construct(
-        HttpClientInterface $httpClient,
-        RequestFactoryInterface $requestFactory,
-        NotifyUrlProviderInterface $notifyUrlProvider
-    ) {
-        $this->httpClient = $httpClient;
-        $this->requestFactory = $requestFactory;
-        $this->notifyUrlProvider = $notifyUrlProvider;
+    public function __construct(private HttpClientInterface $httpClient, private RequestFactoryInterface $requestFactory, private NotifyUrlProviderInterface $notifyUrlProvider)
+    {
     }
 
     public function notify(int $programId, string $orderId, float $total, int $partnerId, string $ip): void

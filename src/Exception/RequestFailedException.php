@@ -10,18 +10,8 @@ use RuntimeException;
 
 final class RequestFailedException extends RuntimeException
 {
-    private RequestInterface $request;
-
-    private ResponseInterface $response;
-
-    private int $statusCode;
-
-    public function __construct(RequestInterface $request, ResponseInterface $response, int $statusCode)
+    public function __construct(private readonly RequestInterface $request, private readonly ResponseInterface $response, private readonly int $statusCode)
     {
-        $this->request = $request;
-        $this->response = $response;
-        $this->statusCode = $statusCode;
-
         parent::__construct(sprintf('Request failed with status code %d', $this->statusCode));
     }
 

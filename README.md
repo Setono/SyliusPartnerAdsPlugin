@@ -8,6 +8,16 @@ This plugin will track sales made by Partner Ads affiliates.
 
 It works by saving the affiliate partner id when the visitor visits any page on your shop. Then when the user successfully completes an order it will send a HTTP request to Partner Ads telling them to credit the affiliate partner.
 
+## Requirements
+
+| Package      | Version    |
+|--------------|------------|
+| PHP          | >=8.2      |
+| sylius/sylius| ^2.0       |
+| Symfony      | ^6.4 \|\| ^7.4 |
+
+> For Sylius 1.x use the [`1.x`](https://github.com/Setono/SyliusPartnerAdsPlugin/tree/1.x) version of this plugin.
+
 ## Installation
 
 ### Step 1: Download the plugin
@@ -18,69 +28,55 @@ composer require setono/sylius-partner-ads-plugin
 
 ### Step 2: Enable the plugin
 
-Then, enable the plugin by adding it to the list of registered plugins/bundles
-in the `config/bundles.php` file of your project before (!) `SyliusGridBundle`:
+If it wasn't done automatically by Symfony Flex, enable the plugin by adding it to the list of registered plugins/bundles
+in the `config/bundles.php` file of your project:
 
 ```php
 <?php
 # config/bundles.php
 return [
+    // ...
     Setono\SyliusPartnerAdsPlugin\SetonoSyliusPartnerAdsPlugin::class => ['all' => true],
-    Sylius\Bundle\GridBundle\SyliusGridBundle::class => ['all' => true],
+    // ...
 ];
 ```
 
-### Step 3: Configure plugin
-
-```yaml
-# config/packages/_sylius.yaml
-imports:
-    # ...
-    - { resource: "@SetonoSyliusPartnerAdsPlugin/Resources/config/app/config.yaml" }
-    # ...
-```
-
-### Step 4: Import routing
+### Step 3: Import routing
 
 ```yaml
 # config/routes/setono_sylius_partner_ads.yaml
-setono_partner_ads_plugin:
-    resource: "@SetonoSyliusPartnerAdsPlugin/Resources/config/routing.yaml"
+setono_sylius_partner_ads:
+    resource: "@SetonoSyliusPartnerAdsPlugin/config/routes.yaml"
 ```
 
-### Step 5: HTTP client
-If you already use a PSR18 HTTP client you need to inject that service:
+### Step 4: HTTP client
+If you already use a PSR-18 HTTP client you need to inject that service:
 ```yaml
 setono_sylius_partner_ads:
     http_client: '@http_client_service_id'
 ```
 
-If not, you can just do composer the Buzz library and it will automatically register the Buzz client as the HTTP client:
+If not, you can just install the Buzz library and it will automatically register the Buzz client as the HTTP client:
 
 ```bash
-$ composer require kriswallsmith/buzz
+composer require kriswallsmith/buzz
 ```
 
-### Step 6: Update your database schema
+### Step 5: Update your database schema
 
 ```bash
-$ php bin/console doctrine:migrations:diff
-$ php bin/console doctrine:migrations:migrate
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
 ```
 
-### Step 7: Setup program
+### Step 6: Setup program
 
 Login to your Sylius app admin and go to the Partner Ads page and click "Create" to create a new program. Fill in the program id of your Partner Ads program, make sure "enable" is toggled on, and choose which channel the program should be applied to. Please notice you should only make one program for each channel, or else you will end up with undefined behaviour.
 
-### Step 8 (optional, but recommended): Configure Async HTTP requests
-This plugin will make a HTTP request to Partner Ads when a customer completes an order. This will make the 'Thank you' page load slower. To circumvent that you can use RabbitMQ with Symfony Messenger to send this HTTP request asynchronously.
+### Step 7 (optional, but recommended): Configure Async HTTP requests
+This plugin will make a HTTP request to Partner Ads when a customer completes an order. This will make the 'Thank you' page load slower. To circumvent that you can use a transport (e.g. RabbitMQ) with Symfony Messenger to send this HTTP request asynchronously.
 
 Follow the installation instructions here: [How to Use the Messenger](https://symfony.com/doc/current/messenger.html) and then [configure a transport](https://symfony.com/doc/current/messenger.html#transports).
-
-Basically you should do:
-```bash
-$ composer req messenger symfony/serializer-pack
-```
 
 Then configure the Messenger component:
 ```yaml
@@ -107,8 +103,6 @@ setono_sylius_partner_ads:
 ```
 
 After this the Messenger will be automatically enabled in this plugin and subsequently it will send an asynchronous request to Partner Ads instead of a synchronous.
-
-For testing purposes you can sign up for a free RabbitMQ cloud service here: [CloudAMQP](https://www.cloudamqp.com/plans.html).
 
 [ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
 [ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license

@@ -8,15 +8,8 @@ use InvalidArgumentException;
 
 final class MissingVariableInUrlException extends InvalidArgumentException
 {
-    private string $url;
-
-    private string $missingVariable;
-
-    public function __construct(string $url, string $missingVariable)
+    public function __construct(private readonly string $url, private readonly string $missingVariable)
     {
-        $this->url = $url;
-        $this->missingVariable = $missingVariable;
-
         parent::__construct(sprintf('The URL %s is missing variable %s', $this->url, $this->missingVariable));
     }
 

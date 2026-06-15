@@ -2,24 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Tests\Setono\SyliusPartnerAdsPlugin\Application\Client;
+namespace Setono\SyliusPartnerAdsPlugin\Tests\Application\Client;
 
 use Psr\Log\LoggerInterface;
 use Setono\SyliusPartnerAdsPlugin\Client\ClientInterface;
 use Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProviderInterface;
 
+/**
+ * Test double used by the test application so functional tests don't make real HTTP requests to Partner Ads.
+ */
 final class Client implements ClientInterface
 {
-    /** @var NotifyUrlProviderInterface */
-    private $notifyUrlProvider;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    public function __construct(NotifyUrlProviderInterface $notifyUrlProvider, LoggerInterface $logger)
-    {
-        $this->notifyUrlProvider = $notifyUrlProvider;
-        $this->logger = $logger;
+    public function __construct(
+        private readonly NotifyUrlProviderInterface $notifyUrlProvider,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     public function notify(int $programId, string $orderId, float $total, int $partnerId, string $ip): void

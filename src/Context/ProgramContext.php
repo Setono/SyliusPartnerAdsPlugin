@@ -8,16 +8,10 @@ use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
 use Setono\SyliusPartnerAdsPlugin\Repository\ProgramRepositoryInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 
-final class ProgramContext implements ProgramContextInterface
+final readonly class ProgramContext implements ProgramContextInterface
 {
-    private ChannelContextInterface $channelContext;
-
-    private ProgramRepositoryInterface $programRepository;
-
-    public function __construct(ChannelContextInterface $channelContext, ProgramRepositoryInterface $programRepository)
+    public function __construct(private ChannelContextInterface $channelContext, private ProgramRepositoryInterface $programRepository)
     {
-        $this->channelContext = $channelContext;
-        $this->programRepository = $programRepository;
     }
 
     public function getProgram(): ?ProgramInterface
