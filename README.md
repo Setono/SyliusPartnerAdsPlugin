@@ -28,8 +28,8 @@ composer require setono/sylius-partner-ads-plugin
 
 ### Step 2: Enable the plugin
 
-If it wasn't done automatically by Symfony Flex, enable the plugin by adding it to the list of registered plugins/bundles
-in the `config/bundles.php` file of your project:
+Enable the plugin by adding it to the list of registered plugins/bundles in the `config/bundles.php` file of your
+project, **before** `SyliusGridBundle` (this is required so the plugin's resource is registered before the grid is built):
 
 ```php
 <?php
@@ -37,6 +37,7 @@ in the `config/bundles.php` file of your project:
 return [
     // ...
     Setono\SyliusPartnerAdsPlugin\SetonoSyliusPartnerAdsPlugin::class => ['all' => true],
+    Sylius\Bundle\GridBundle\SyliusGridBundle::class => ['all' => true],
     // ...
 ];
 ```

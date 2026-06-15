@@ -6,15 +6,11 @@ on:
     workflow_dispatch: ~
 
 jobs:
-    # NOTE: the backwards-compatibility job has been removed for the 1.x -> 2.x major upgrade. There is no
-    # 2.0 baseline to compare against yet and a major release intentionally breaks BC. Re-add it once 2.0
-    # has been released:
-    #
-    #   backwards-compatibility:
-    #       runs-on: "ubuntu-latest"
-    #       if: "github.event_name == 'pull_request'"
-    #       steps:
-    #           -   uses: "setono/sylius-plugin/backwards-compatibility@v2"
+    backwards-compatibility:
+        runs-on: "ubuntu-latest"
+        if: "github.event_name == 'pull_request'"
+        steps:
+            -   uses: "setono/sylius-plugin/backwards-compatibility@v2"
 
     coding-standards:
         runs-on: "ubuntu-latest"

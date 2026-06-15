@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Nyholm\Psr7\Factory\Psr17Factory;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculator;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
 use Setono\SyliusPartnerAdsPlugin\Client\Client;
@@ -36,9 +38,12 @@ return static function (ContainerConfigurator $container): void {
         ]);
     $services->alias(NotifyUrlProviderInterface::class, NotifyUrlProvider::class);
 
-    // PSR-17 factories. These ids are referenced by the Client and by RegisterHttpClientPass
-    $services->set('setono_sylius_partner_ads.http_client.request_factory', Psr17Factory::class);
-    $services->set('setono_sylius_partner_ads.http_client.response_factory', Psr17Factory::class);
+    // PSR-17 factories, discovered from whichever PSR-17 implementation the application provides.
+    // These ids are referenced by the Client and by RegisterHttpClientPass.
+    $services->set('setono_sylius_partner_ads.http_client.request_factory', RequestFactoryInterface::class)
+        ->factory([Psr17FactoryDiscovery::class, 'findRequestFactory']);
+    $services->set('setono_sylius_partner_ads.http_client.response_factory', ResponseFactoryInterface::class)
+        ->factory([Psr17FactoryDiscovery::class, 'findResponseFactory']);
 
     $services->set(Client::class)
         ->args([

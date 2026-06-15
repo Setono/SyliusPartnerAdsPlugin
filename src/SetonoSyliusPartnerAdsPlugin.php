@@ -35,11 +35,6 @@ final class SetonoSyliusPartnerAdsPlugin extends AbstractResourceBundle
         ];
     }
 
-    protected function getModelNamespace(): string
-    {
-        return 'Setono\SyliusPartnerAdsPlugin\Model';
-    }
-
     protected function getConfigFilesPath(): string
     {
         return sprintf(

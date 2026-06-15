@@ -6,31 +6,17 @@ use ShipMonk\ComposerDependencyAnalyser\Config\Configuration;
 use ShipMonk\ComposerDependencyAnalyser\Config\ErrorType;
 
 return (new Configuration())
-    // The Sylius split-package ignores below only apply when sylius/sylius (which "replace"s them) is the
-    // installed provider; depending on how dependencies resolve they may not match, which is fine.
+    // Buzz is only used when its optional dev dependency is installed (see below), so its ignore does not
+    // apply when only production dependencies are analysed.
     ->disableReportingUnmatchedIgnores()
-    // Scan the PHP service configuration so symbols only referenced there (e.g. nyholm/psr7) are detected.
+    // Scan the PHP service configuration so symbols only referenced there (e.g. php-http/discovery) are detected.
     ->addPathToScan(__DIR__ . '/config', false)
     ->addPathToExclude(__DIR__ . '/tests')
-    // Buzz is an optional PSR-18 client fallback referenced behind interface_exists()/class_exists()
-    // guards in the compiler pass and configuration, so it is intentionally a dev dependency and may
-    // not be installed at all when only production dependencies are analysed.
+    // Buzz is an optional PSR-18 client fallback referenced behind interface_exists()/class_exists() guards,
+    // so it is intentionally a dev dependency and may not be installed when only production deps are analysed.
     ->ignoreErrorsOnPackage('kriswallsmith/buzz', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreUnknownClasses([
         \Buzz\Client\BuzzClientInterface::class,
         \Buzz\Client\Curl::class,
     ])
-    // The sylius/sylius metapackage (dev only) "replace"s the split sylius/* packages this plugin requires.
-    // In this dev environment their classes therefore resolve to sylius/sylius, so the analyser reports
-    // sylius/sylius as a shadow dependency and the split packages as unused. The split packages are the
-    // correct production dependencies for consumers that do not install the sylius/sylius metapackage.
-    ->ignoreErrorsOnPackage('sylius/sylius', [ErrorType::DEV_DEPENDENCY_IN_PROD])
-    ->ignoreErrorsOnPackages([
-        'sylius/channel',
-        'sylius/channel-bundle',
-        'sylius/core',
-        'sylius/core-bundle',
-        'sylius/order',
-        'sylius/ui-bundle',
-    ], [ErrorType::UNUSED_DEPENDENCY])
 ;

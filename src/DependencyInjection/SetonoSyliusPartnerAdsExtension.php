@@ -44,20 +44,8 @@ final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension im
 
     public function prepend(ContainerBuilder $container): void
     {
-        /** @var array{resources: array{program: array{classes: array{model: string}}}, messenger: array{transport: string|null}} $config */
-        $config = $this->processConfiguration(
-            $this->getConfiguration([], $container),
-            $container->getExtensionConfig($this->getAlias()),
-        );
-
-        // The model class parameter is normally set by registerResources() during load(), but the
-        // sylius_grid extension resolves it while loading its own configuration. Depending on bundle
-        // registration order that can happen before this plugin's load() runs, so we set it here in
-        // prepend() (which always runs before any load()) to make the grid registration order-independent.
-        $container->setParameter('setono_sylius_partner_ads.model.program.class', $config['resources']['program']['classes']['model']);
-
         $this->prependGrid($container);
-        $this->prependMessenger($container, $config['messenger']['transport']);
+        $this->prependMessenger($container);
     }
 
     private function prependGrid(ContainerBuilder $container): void
@@ -95,8 +83,16 @@ final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension im
         ]);
     }
 
-    private function prependMessenger(ContainerBuilder $container, ?string $transport): void
+    private function prependMessenger(ContainerBuilder $container): void
     {
+        /** @var array{messenger: array{transport: string|null}} $config */
+        $config = $this->processConfiguration(
+            $this->getConfiguration([], $container),
+            $container->getExtensionConfig($this->getAlias()),
+        );
+
+        $transport = $config['messenger']['transport'];
+
         if (null === $transport) {
             return;
         }
