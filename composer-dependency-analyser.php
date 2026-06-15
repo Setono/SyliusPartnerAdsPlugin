@@ -6,6 +6,9 @@ use ShipMonk\ComposerDependencyAnalyser\Config\Configuration;
 use ShipMonk\ComposerDependencyAnalyser\Config\ErrorType;
 
 return (new Configuration())
+    // The Sylius split-package ignores below only apply when sylius/sylius (which "replace"s them) is the
+    // installed provider; depending on how dependencies resolve they may not match, which is fine.
+    ->disableReportingUnmatchedIgnores()
     // Scan the PHP service configuration so symbols only referenced there (e.g. nyholm/psr7) are detected.
     ->addPathToScan(__DIR__ . '/config', false)
     ->addPathToExclude(__DIR__ . '/tests')
