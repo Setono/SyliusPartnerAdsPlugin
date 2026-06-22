@@ -16,7 +16,7 @@ It works by saving the affiliate partner id when the visitor visits any page on 
 | sylius/sylius| ^2.0       |
 | Symfony      | ^6.4 \|\| ^7.4 |
 
-> For Sylius 1.x use the [`1.x`](https://github.com/Setono/SyliusPartnerAdsPlugin/tree/1.x) version of this plugin.
+> For Sylius 1.10 use the [`2.x`](https://github.com/Setono/SyliusPartnerAdsPlugin/tree/2.x) version of this plugin.
 
 ## Installation
 
