@@ -15,30 +15,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class NotifySubscriber implements EventSubscriberInterface
+final readonly class NotifySubscriber implements EventSubscriberInterface
 {
-    private MessageBusInterface $messageBus;
-
-    private CookieHandlerInterface $cookieHandler;
-
-    private OrderTotalCalculatorInterface $orderTotalCalculator;
-
-    private ProgramContextInterface $programContext;
-
-    private OrderRepositoryInterface $orderRepository;
-
-    public function __construct(
-        MessageBusInterface $messageBus,
-        CookieHandlerInterface $cookieHandler,
-        OrderTotalCalculatorInterface $orderTotalCalculator,
-        ProgramContextInterface $programContext,
-        OrderRepositoryInterface $orderRepository
-    ) {
-        $this->messageBus = $messageBus;
-        $this->cookieHandler = $cookieHandler;
-        $this->orderTotalCalculator = $orderTotalCalculator;
-        $this->programContext = $programContext;
-        $this->orderRepository = $orderRepository;
+    public function __construct(private MessageBusInterface $messageBus, private CookieHandlerInterface $cookieHandler, private OrderTotalCalculatorInterface $orderTotalCalculator, private ProgramContextInterface $programContext, private OrderRepositoryInterface $orderRepository)
+    {
     }
 
     public static function getSubscribedEvents(): array
@@ -89,11 +69,11 @@ final class NotifySubscriber implements EventSubscriberInterface
         }
 
         $this->messageBus->dispatch(new Notify(
-            (int) $program->getProgramId(),
+            $program->getProgramId(),
             (string) $order->getNumber(),
             $this->orderTotalCalculator->get($order),
             $this->cookieHandler->get($request),
-            (string) $request->getClientIp()
+            (string) $request->getClientIp(),
         ));
     }
 }

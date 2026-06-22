@@ -1,0 +1,9 @@
+setono_sylius_partner_ads_admin_program:
+    resource: |
+        alias: setono_sylius_partner_ads.program
+        section: admin
+        permission: true
+        templates: "@SyliusAdmin\\shared\\crud"
+        redirect: update
+        grid: setono_sylius_partner_ads_admin_program
+    type: sylius.resource

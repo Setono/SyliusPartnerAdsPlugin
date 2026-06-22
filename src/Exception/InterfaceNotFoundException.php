@@ -8,12 +8,8 @@ use RuntimeException;
 
 final class InterfaceNotFoundException extends RuntimeException
 {
-    private string $interface;
-
-    public function __construct(string $interface)
+    public function __construct(private readonly string $interface)
     {
-        $this->interface = $interface;
-
         parent::__construct(sprintf('The interface "%s" was not found', $this->interface));
     }
 

@@ -7,13 +7,10 @@ namespace Setono\SyliusPartnerAdsPlugin\Message\Handler;
 use Setono\SyliusPartnerAdsPlugin\Client\ClientInterface;
 use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
 
-final class NotifyHandler
+final readonly class NotifyHandler
 {
-    private ClientInterface $client;
-
-    public function __construct(ClientInterface $client)
+    public function __construct(private ClientInterface $client)
     {
-        $this->client = $client;
     }
 
     public function __invoke(Notify $message): void

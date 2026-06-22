@@ -1,10 +1,24 @@
 framework:
-    csrf_protection: true
-    form: true
-    ide: phpstorm
     secret: '%env(APP_SECRET)%'
+    ide: 'phpstorm'
+    form: true
+    csrf_protection: true
     session:
         handler_id: ~
-    serializer:
-        mapping:
-            paths: [ '%kernel.project_dir%/config/serialization' ]
+
+when@dev:
+    framework:
+        profiler: { only_exceptions: false }
+
+when@test:
+    framework:
+        test: ~
+        session:
+            storage_factory_id: session.storage.factory.mock_file
+
+        mailer:
+            dsn: '%env(MAILER_DSN)%'
+        cache:
+            pools:
+                test.mailer_pool:
+                    adapter: cache.adapter.filesystem

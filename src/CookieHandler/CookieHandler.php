@@ -8,16 +8,10 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-final class CookieHandler implements CookieHandlerInterface
+final readonly class CookieHandler implements CookieHandlerInterface
 {
-    private string $cookieName;
-
-    private int $expire;
-
-    public function __construct(string $cookieName, int $expire)
+    public function __construct(private string $cookieName, private int $expire)
     {
-        $this->cookieName = $cookieName;
-        $this->expire = $expire;
     }
 
     public function set(Response $response, int $partnerId): void

@@ -1,0 +1,2 @@
+setono_sylius_partner_ads:
+    resource: "@SetonoSyliusPartnerAdsPlugin/config/routes.yaml"

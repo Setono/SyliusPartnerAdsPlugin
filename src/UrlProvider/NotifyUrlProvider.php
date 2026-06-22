@@ -6,13 +6,10 @@ namespace Setono\SyliusPartnerAdsPlugin\UrlProvider;
 
 use Setono\SyliusPartnerAdsPlugin\Exception\MissingVariableInUrlException;
 
-final class NotifyUrlProvider implements NotifyUrlProviderInterface
+final readonly class NotifyUrlProvider implements NotifyUrlProviderInterface
 {
-    private string $url;
-
-    public function __construct(string $url)
+    public function __construct(private string $url)
     {
-        $this->url = $url;
     }
 
     public function provide(int $programId, string $orderId, float $value, int $partnerId, string $ip): string
@@ -27,8 +24,8 @@ final class NotifyUrlProvider implements NotifyUrlProviderInterface
 
         return str_replace(
             ['{program_id}', '{partner_id}', '{ip}', '{order_id}', '{value}'],
-            [$programId, $partnerId, $ip, $orderId, $value],
-            $this->url
+            [(string) $programId, (string) $partnerId, $ip, $orderId, (string) $value],
+            $this->url,
         );
     }
 }

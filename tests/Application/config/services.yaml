@@ -4,8 +4,12 @@ parameters:
     locale: en_US
 
 services:
-    Tests\Setono\SyliusPartnerAdsPlugin\Application\Client\Client:
-        decorates: setono_sylius_partner_ads.client.default
+    # Replace the real Partner Ads HTTP client with a logging test double so the test
+    # application never makes real outbound requests.
+    Setono\SyliusPartnerAdsPlugin\Tests\Application\Client\Client:
         arguments:
-            - '@setono_sylius_partner_ads.url_provider.notify'
+            - '@Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProviderInterface'
             - '@logger'
+
+    Setono\SyliusPartnerAdsPlugin\Client\ClientInterface:
+        alias: Setono\SyliusPartnerAdsPlugin\Tests\Application\Client\Client

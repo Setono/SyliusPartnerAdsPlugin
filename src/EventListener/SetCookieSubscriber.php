@@ -9,16 +9,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class SetCookieSubscriber implements EventSubscriberInterface
+final readonly class SetCookieSubscriber implements EventSubscriberInterface
 {
-    private CookieHandlerInterface $cookieHandler;
-
-    private string $queryParameter;
-
-    public function __construct(CookieHandlerInterface $cookieHandler, string $queryParameter)
+    public function __construct(private CookieHandlerInterface $cookieHandler, private string $queryParameter)
     {
-        $this->cookieHandler = $cookieHandler;
-        $this->queryParameter = $queryParameter;
     }
 
     public static function getSubscribedEvents(): array
