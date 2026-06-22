@@ -21,12 +21,22 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class NotifySubscriberTest extends TestCase
 {
     use ProphecyTrait;
+
+    #[Test]
+    public function it_subscribes_to_the_kernel_request_event(): void
+    {
+        self::assertSame(
+            [KernelEvents::REQUEST => 'notify'],
+            NotifySubscriber::getSubscribedEvents(),
+        );
+    }
 
     #[Test]
     public function it_dispatches_a_notify_command_on_the_thank_you_page(): void

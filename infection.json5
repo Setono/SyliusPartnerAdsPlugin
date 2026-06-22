@@ -1,7 +1,22 @@
 {
     "$schema": "vendor/infection/infection/resources/schema.json",
     "source": {
-        "directories": ["src"]
+        "directories": ["src"],
+        // The bundle class is pure framework wiring (compiler passes, Doctrine mapping path). It is
+        // exercised by the functional AdminRoutingTest, but its mutants (e.g. parent::build(), the
+        // already-lowercase getConfigFilesPath()) are equivalent or only killable through a cached
+        // kernel boot, which is flaky under parallel mutation runs.
+        "excludes": ["SetonoSyliusPartnerAdsPlugin.php"]
+    },
+    "mutators": {
+        "@default": true,
+        // Order totals are integer minor units, so round($total / 100, 2) and round($total / 100, 3)
+        // always agree: the increased-precision mutant is equivalent (unkillable).
+        "IncrementInteger": {
+            "ignore": [
+                "Setono\\SyliusPartnerAdsPlugin\\Calculator\\OrderTotalCalculator::get"
+            ]
+        }
     },
     "logs": {
         "text": "php://stderr",
