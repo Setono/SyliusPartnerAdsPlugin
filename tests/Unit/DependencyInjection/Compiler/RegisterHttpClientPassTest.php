@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterHttpClientPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\DependencyInjection\Reference;
 
 final class RegisterHttpClientPassTest extends AbstractCompilerPassTestCase
 {
@@ -47,5 +48,10 @@ final class RegisterHttpClientPassTest extends AbstractCompilerPassTestCase
         $this->compile();
 
         $this->assertContainerBuilderHasService('setono_sylius_partner_ads.http_client', Curl::class);
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument(
+            'setono_sylius_partner_ads.http_client',
+            0,
+            new Reference('setono_sylius_partner_ads.http_client.response_factory'),
+        );
     }
 }

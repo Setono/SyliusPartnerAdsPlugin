@@ -31,4 +31,28 @@ final class ConfigurationTest extends TestCase
             ],
         ]);
     }
+
+    #[Test]
+    public function it_allows_a_cookie_expiry_of_zero(): void
+    {
+        $this->assertConfigurationIsValid([
+            ['cookie' => ['expire' => 0]],
+        ]);
+    }
+
+    #[Test]
+    public function it_rejects_a_negative_cookie_expiry(): void
+    {
+        $this->assertConfigurationIsInvalid([
+            ['cookie' => ['expire' => -1]],
+        ]);
+    }
+
+    #[Test]
+    public function it_rejects_an_empty_http_client(): void
+    {
+        $this->assertConfigurationIsInvalid([
+            ['http_client' => ''],
+        ]);
+    }
 }
