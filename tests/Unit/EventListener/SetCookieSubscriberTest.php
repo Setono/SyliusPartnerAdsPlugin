@@ -14,12 +14,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 final class SetCookieSubscriberTest extends TestCase
 {
     use ProphecyTrait;
 
     private const PARAM = 'param';
+
+    #[Test]
+    public function it_subscribes_to_the_kernel_response_event(): void
+    {
+        self::assertSame(
+            [KernelEvents::RESPONSE => ['setCookie']],
+            SetCookieSubscriber::getSubscribedEvents(),
+        );
+    }
 
     #[Test]
     public function it_does_nothing_when_not_the_main_request(): void

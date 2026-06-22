@@ -105,7 +105,7 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    public function addHttpClientNode(): ScalarNodeDefinition
+    private function addHttpClientNode(): ScalarNodeDefinition
     {
         $treeBuilder = new TreeBuilder('http_client', 'scalar');
 

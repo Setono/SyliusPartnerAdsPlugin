@@ -30,6 +30,18 @@ final class NotifyUrlProviderTest extends TestCase
     }
 
     #[Test]
+    public function it_url_encodes_the_substituted_values(): void
+    {
+        $provider = new NotifyUrlProvider(
+            'https://example.com/?programid={program_id}&type=salg&partnerid={partner_id}&userip={ip}&ordreid={order_id}&varenummer=x&antal=1&omprsalg={value}',
+        );
+
+        $url = $provider->provide(123, 'order 123/ab', 123.123, 456, '123.123.123.123');
+
+        self::assertStringContainsString('ordreid=order%20123%2Fab', $url);
+    }
+
+    #[Test]
     public function it_throws_an_exception_when_a_variable_is_missing(): void
     {
         $provider = new NotifyUrlProvider('');

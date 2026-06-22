@@ -21,12 +21,22 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class NotifySubscriberTest extends TestCase
 {
     use ProphecyTrait;
+
+    #[Test]
+    public function it_subscribes_to_the_kernel_request_event(): void
+    {
+        self::assertSame(
+            [KernelEvents::REQUEST => 'notify'],
+            NotifySubscriber::getSubscribedEvents(),
+        );
+    }
 
     #[Test]
     public function it_dispatches_a_notify_command_on_the_thank_you_page(): void
@@ -76,6 +86,66 @@ final class NotifySubscriberTest extends TestCase
     }
 
     #[Test]
+    public function it_does_nothing_when_there_is_no_program_for_the_current_channel(): void
+    {
+        $messageBus = $this->prophesize(MessageBusInterface::class);
+        $cookieHandler = $this->prophesize(CookieHandlerInterface::class);
+        $orderTotalCalculator = $this->prophesize(OrderTotalCalculatorInterface::class);
+        $programContext = $this->prophesize(ProgramContextInterface::class);
+        $orderRepository = $this->prophesize(OrderRepositoryInterface::class);
+        $order = $this->prophesize(OrderInterface::class);
+
+        $event = $this->createThankYouEvent();
+
+        $orderRepository->find(123)->willReturn($order->reveal());
+        $cookieHandler->has($event->getRequest())->willReturn(true);
+        $programContext->getProgram()->willReturn(null);
+
+        $messageBus->dispatch(Argument::any())->shouldNotBeCalled();
+
+        $subscriber = new NotifySubscriber(
+            $messageBus->reveal(),
+            $cookieHandler->reveal(),
+            $orderTotalCalculator->reveal(),
+            $programContext->reveal(),
+            $orderRepository->reveal(),
+        );
+
+        $subscriber->notify($event);
+    }
+
+    #[Test]
+    public function it_does_nothing_when_the_program_has_no_program_id(): void
+    {
+        $messageBus = $this->prophesize(MessageBusInterface::class);
+        $cookieHandler = $this->prophesize(CookieHandlerInterface::class);
+        $orderTotalCalculator = $this->prophesize(OrderTotalCalculatorInterface::class);
+        $programContext = $this->prophesize(ProgramContextInterface::class);
+        $orderRepository = $this->prophesize(OrderRepositoryInterface::class);
+        $order = $this->prophesize(OrderInterface::class);
+        $program = $this->prophesize(ProgramInterface::class);
+
+        $event = $this->createThankYouEvent();
+
+        $orderRepository->find(123)->willReturn($order->reveal());
+        $cookieHandler->has($event->getRequest())->willReturn(true);
+        $program->getProgramId()->willReturn(null);
+        $programContext->getProgram()->willReturn($program->reveal());
+
+        $messageBus->dispatch(Argument::any())->shouldNotBeCalled();
+
+        $subscriber = new NotifySubscriber(
+            $messageBus->reveal(),
+            $cookieHandler->reveal(),
+            $orderTotalCalculator->reveal(),
+            $programContext->reveal(),
+            $orderRepository->reveal(),
+        );
+
+        $subscriber->notify($event);
+    }
+
+    #[Test]
     public function it_does_nothing_when_the_route_is_not_the_thank_you_page(): void
     {
         $messageBus = $this->prophesize(MessageBusInterface::class);
@@ -104,5 +174,21 @@ final class NotifySubscriberTest extends TestCase
         );
 
         $subscriber->notify($event);
+    }
+
+    private function createThankYouEvent(): RequestEvent
+    {
+        $session = new Session(new MockArraySessionStorage());
+        $session->set('sylius_order_id', 123);
+
+        $request = new Request();
+        $request->attributes->set('_route', 'sylius_shop_order_thank_you');
+        $request->setSession($session);
+
+        return new RequestEvent(
+            $this->prophesize(HttpKernelInterface::class)->reveal(),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST,
+        );
     }
 }
