@@ -23,7 +23,7 @@
             </constraint>
             <constraint name="GreaterThan">
                 <option name="value">1</option>
-                <option name="message">setono_sylius_partner_ads.program.program_id.greather_than</option>
+                <option name="message">setono_sylius_partner_ads.program.program_id.greater_than</option>
                 <option name="groups">
                     <value>setono_sylius_partner_ads</value>
                 </option>

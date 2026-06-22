@@ -13,10 +13,10 @@ final class AdminMenuListener
     {
         $menu = $event->getMenu();
 
-        $configuration = $menu->getChild('marketing');
+        $marketingMenu = $menu->getChild('marketing');
 
-        if (null !== $configuration) {
-            $this->addChild($configuration);
+        if (null !== $marketingMenu) {
+            $this->addChild($marketingMenu);
         } else {
             $this->addChild($menu->getFirstChild());
         }
@@ -29,7 +29,7 @@ final class AdminMenuListener
                 'route' => 'setono_sylius_partner_ads_admin_program_index',
             ])
             ->setLabel('setono_sylius_partner_ads.ui.partner_ads')
-            ->setLabelAttribute('icon', 'handshake outline')
+            ->setLabelAttribute('icon', 'tabler:heart-handshake')
         ;
     }
 }

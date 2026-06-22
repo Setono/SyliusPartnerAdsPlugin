@@ -1,8 +1,8 @@
 setono_sylius_partner_ads:
     program:
         program_id:
-            unique: Program id is already in use in a different program.
-            not_blank: Program id cannot be blank.
-            greather_than: Program id must be greather than {{ compared_value }}.
+            unique: Program ID is already in use in a different program.
+            not_blank: Program ID cannot be blank.
+            greater_than: Program ID must be greater than {{ compared_value }}.
         channel:
             not_null: You need to select a channel

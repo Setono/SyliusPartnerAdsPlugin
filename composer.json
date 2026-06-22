@@ -11,7 +11,6 @@
     ],
     "require": {
         "php": ">=8.2",
-        "ext-mbstring": "*",
         "knplabs/knp-menu": "^3.1",
         "php-http/discovery": "^1.20",
         "psr/http-client": "^1.0",
@@ -79,6 +78,11 @@
         "analyse": "phpstan analyse",
         "check-style": "ecs check",
         "fix-style": "ecs check --fix",
-        "phpunit": "phpunit"
+        "phpunit": "phpunit",
+        "test": [
+            "@check-style",
+            "@analyse",
+            "@phpunit"
+        ]
     }
 }

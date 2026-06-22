@@ -68,6 +68,16 @@ final class CookieHandlerTest extends TestCase
     }
 
     #[Test]
+    public function it_throws_when_getting_a_value_that_is_not_set(): void
+    {
+        $cookieHandler = new CookieHandler($this->name, $this->expire);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $cookieHandler->get(new Request());
+    }
+
+    #[Test]
     public function it_returns_true_if_cookie_is_set(): void
     {
         $cookieHandler = $this->createCookieHandler(new Response());
@@ -95,8 +105,10 @@ final class CookieHandlerTest extends TestCase
 
     private function createRequest(?string $name = null): Request
     {
+        // Cookies arrive as strings over HTTP, so the value is a string here on purpose. This also
+        // verifies the int cast in CookieHandler::get() is actually exercised.
         return new Request([], [], [], [
-            $name ?? $this->name => $this->partnerId,
+            $name ?? $this->name => (string) $this->partnerId,
         ]);
     }
 }

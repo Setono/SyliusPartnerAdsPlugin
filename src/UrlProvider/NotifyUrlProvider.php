@@ -14,18 +14,22 @@ final readonly class NotifyUrlProvider implements NotifyUrlProviderInterface
 
     public function provide(int $programId, string $orderId, float $value, int $partnerId, string $ip): string
     {
-        $variables = ['{program_id}', '{partner_id}', '{ip}', '{order_id}', '{value}'];
+        // Values are URL-encoded so they are safe to interpolate into the query string. This also
+        // prevents a value from accidentally introducing another placeholder during replacement.
+        $replacements = [
+            '{program_id}' => rawurlencode((string) $programId),
+            '{partner_id}' => rawurlencode((string) $partnerId),
+            '{ip}' => rawurlencode($ip),
+            '{order_id}' => rawurlencode($orderId),
+            '{value}' => rawurlencode((string) $value),
+        ];
 
-        foreach ($variables as $variable) {
-            if (mb_strpos($this->url, $variable) === false) {
+        foreach (array_keys($replacements) as $variable) {
+            if (!str_contains($this->url, $variable)) {
                 throw new MissingVariableInUrlException($this->url, $variable);
             }
         }
 
-        return str_replace(
-            ['{program_id}', '{partner_id}', '{ip}', '{order_id}', '{value}'],
-            [(string) $programId, (string) $partnerId, $ip, $orderId, (string) $value],
-            $this->url,
-        );
+        return strtr($this->url, $replacements);
     }
 }
