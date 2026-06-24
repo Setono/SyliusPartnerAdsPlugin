@@ -37,7 +37,7 @@
         "kriswallsmith/buzz": "^1.2",
         "matthiasnoback/symfony-config-test": "^5.1 || ^6.0",
         "nyholm/psr7": "^1.8",
-        "payum/core": "^1.7.5",
+        "payum/core": "^1.7.7",
         "setono/sylius-plugin": "^2.0",
         "sylius/grid-bundle": "^1.15",
         "sylius/sylius": "~2.2.5",
