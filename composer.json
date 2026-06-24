@@ -38,7 +38,7 @@
         "matthiasnoback/symfony-config-test": "^5.1 || ^6.0",
         "nyholm/psr7": "^1.8",
         "payum/core": "^1.7.5",
-        "setono/sylius-plugin": "^2.0",
+        "setono/sylius-plugin": "^2.3",
         "sylius/grid-bundle": "^1.15",
         "sylius/sylius": "~2.2.5",
         "symfony/debug-bundle": "^6.4 || ^7.4",
