@@ -35,7 +35,7 @@
     "require-dev": {
         "api-platform/symfony": "^4.3.3",
         "kriswallsmith/buzz": "^1.2",
-        "matthiasnoback/symfony-config-test": "^5.1 || ^6.0",
+        "matthiasnoback/symfony-config-test": "^6.2.0",
         "nyholm/psr7": "^1.8",
         "payum/core": "^1.7.5",
         "setono/sylius-plugin": "^2.0",
