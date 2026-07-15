@@ -33,7 +33,7 @@
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
-        "api-platform/symfony": "^4.3.3",
+        "api-platform/symfony": "^4.3.17",
         "kriswallsmith/buzz": "^1.2",
         "matthiasnoback/symfony-config-test": "^5.1 || ^6.0",
         "nyholm/psr7": "^1.8",
