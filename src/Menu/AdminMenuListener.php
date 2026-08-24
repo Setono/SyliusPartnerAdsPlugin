@@ -16,13 +16,13 @@ final class AdminMenuListener
         $marketingMenu = $menu->getChild('marketing');
 
         if (null !== $marketingMenu) {
-            $this->addChild($marketingMenu);
+            $this->addChildren($marketingMenu);
         } else {
-            $this->addChild($menu->getFirstChild());
+            $this->addChildren($menu->getFirstChild());
         }
     }
 
-    private function addChild(ItemInterface $item): void
+    private function addChildren(ItemInterface $item): void
     {
         $item
             ->addChild('partner_ads', [
@@ -30,6 +30,14 @@ final class AdminMenuListener
             ])
             ->setLabel('setono_sylius_partner_ads.ui.partner_ads')
             ->setLabelAttribute('icon', 'tabler:heart-handshake')
+        ;
+
+        $item
+            ->addChild('partner_ads_conversions', [
+                'route' => 'setono_sylius_partner_ads_admin_conversion_index',
+            ])
+            ->setLabel('setono_sylius_partner_ads.ui.conversions')
+            ->setLabelAttribute('icon', 'tabler:coins')
         ;
     }
 }

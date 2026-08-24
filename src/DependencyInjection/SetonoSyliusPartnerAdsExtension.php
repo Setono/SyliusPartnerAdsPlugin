@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
+use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -70,6 +71,68 @@ final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension im
                         ],
                         'item' => [
                             'update' => ['type' => 'update'],
+                            'delete' => ['type' => 'delete'],
+                        ],
+                    ],
+                ],
+                'setono_sylius_partner_ads_admin_conversion' => [
+                    'driver' => [
+                        'name' => 'doctrine/orm',
+                        'options' => [
+                            'class' => '%setono_sylius_partner_ads.model.conversion.class%',
+                        ],
+                    ],
+                    'sorting' => [
+                        'createdAt' => 'desc',
+                    ],
+                    'fields' => [
+                        'order' => [
+                            'type' => 'string',
+                            'path' => 'order.number',
+                            'label' => 'setono_sylius_partner_ads.ui.order',
+                        ],
+                        'partnerId' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.partner_id',
+                        ],
+                        'state' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.state',
+                        ],
+                        'tries' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.tries',
+                        ],
+                        'lastError' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.last_error',
+                        ],
+                        'notifiedAt' => [
+                            'type' => 'datetime',
+                            'label' => 'setono_sylius_partner_ads.ui.notified_at',
+                            'sortable' => true,
+                        ],
+                        'createdAt' => [
+                            'type' => 'datetime',
+                            'label' => 'setono_sylius_partner_ads.ui.created_at',
+                            'sortable' => true,
+                        ],
+                    ],
+                    'filters' => [
+                        'state' => [
+                            'type' => 'select',
+                            'label' => 'setono_sylius_partner_ads.ui.state',
+                            'form_options' => [
+                                'choices' => [
+                                    'setono_sylius_partner_ads.ui.state_pending' => ConversionInterface::STATE_PENDING,
+                                    'setono_sylius_partner_ads.ui.state_notified' => ConversionInterface::STATE_NOTIFIED,
+                                    'setono_sylius_partner_ads.ui.state_failed' => ConversionInterface::STATE_FAILED,
+                                ],
+                            ],
+                        ],
+                    ],
+                    'actions' => [
+                        'item' => [
                             'delete' => ['type' => 'delete'],
                         ],
                     ],

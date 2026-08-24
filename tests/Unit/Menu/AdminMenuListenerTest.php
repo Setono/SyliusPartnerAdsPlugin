@@ -42,6 +42,13 @@ final class AdminMenuListenerTest extends TestCase
         self::assertSame('setono_sylius_partner_ads.ui.partner_ads', $item->getLabel());
         self::assertSame('tabler:heart-handshake', $item->getLabelAttribute('icon'));
         self::assertSame('/admin/partner-ads', $item->getUri());
+
+        $conversionsItem = $marketing->getChild('partner_ads_conversions');
+        self::assertNotNull($conversionsItem);
+        self::assertNull($catalog->getChild('partner_ads_conversions'));
+        self::assertSame('setono_sylius_partner_ads.ui.conversions', $conversionsItem->getLabel());
+        self::assertSame('tabler:coins', $conversionsItem->getLabelAttribute('icon'));
+        self::assertSame('/admin/partner-ads/conversions', $conversionsItem->getUri());
     }
 
     #[Test]
@@ -60,6 +67,10 @@ final class AdminMenuListenerTest extends TestCase
         self::assertNotNull($item);
         self::assertSame('tabler:heart-handshake', $item->getLabelAttribute('icon'));
         self::assertSame('/admin/partner-ads', $item->getUri());
+
+        $conversionsItem = $catalog->getChild('partner_ads_conversions');
+        self::assertNotNull($conversionsItem);
+        self::assertSame('/admin/partner-ads/conversions', $conversionsItem->getUri());
     }
 
     private function createFactory(): MenuFactory
@@ -67,6 +78,8 @@ final class AdminMenuListenerTest extends TestCase
         $urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
         $urlGenerator->generate('setono_sylius_partner_ads_admin_program_index', Argument::cetera())
             ->willReturn('/admin/partner-ads');
+        $urlGenerator->generate('setono_sylius_partner_ads_admin_conversion_index', Argument::cetera())
+            ->willReturn('/admin/partner-ads/conversions');
 
         $factory = new MenuFactory();
         $factory->addExtension(new RoutingExtension($urlGenerator->reveal()));
