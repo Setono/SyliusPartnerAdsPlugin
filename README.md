@@ -6,7 +6,9 @@
 
 This plugin will track sales made by Partner Ads affiliates.
 
-It works by saving the affiliate partner id when the visitor visits any page on your shop. Then when the user successfully completes an order it will send a HTTP request to Partner Ads telling them to credit the affiliate partner.
+It works by saving the affiliate partner id in a cookie when the visitor lands on your shop through an affiliate link. When the visitor completes an order, the plugin stores a *conversion* referencing the order and the partner id. A console command - meant to be run periodically via cron - then notifies Partner Ads about conversions whose orders have been **paid**, telling them to credit the affiliate partner.
+
+Because the notification happens out-of-band, a slow or failing Partner Ads endpoint can never affect your customers' checkout, unpaid orders are never reported, and failed notifications are retried automatically on the next run.
 
 ## Requirements
 
@@ -74,36 +76,15 @@ php bin/console doctrine:migrations:migrate
 
 Login to your Sylius app admin and go to the Partner Ads page and click "Create" to create a new program. Fill in the program id of your Partner Ads program, make sure "enable" is toggled on, and choose which channel the program should be applied to. Please notice you should only make one program for each channel, or else you will end up with undefined behaviour.
 
-### Step 7 (optional, but recommended): Configure Async HTTP requests
-This plugin will make a HTTP request to Partner Ads when a customer completes an order. This will make the 'Thank you' page load slower. To circumvent that you can use a transport (e.g. RabbitMQ) with Symfony Messenger to send this HTTP request asynchronously.
+### Step 7: Schedule the process command
 
-Follow the installation instructions here: [How to Use the Messenger](https://symfony.com/doc/current/messenger.html) and then [configure a transport](https://symfony.com/doc/current/messenger.html#transports).
+Conversions are sent to Partner Ads by a console command that only picks up conversions whose orders have been paid. Schedule it via cron (every 5-15 minutes is fine - Partner Ads does not need real-time notifications):
 
-Then configure the Messenger component:
-```yaml
-# config/packages/messenger.yaml
-framework:
-    messenger:
-        transports:
-            amqp: "%env(MESSENGER_TRANSPORT_DSN)%"
+```
+*/10 * * * * php /path/to/your/app/bin/console setono:sylius-partner-ads:process-conversions
 ```
 
-```yaml
-# .env
-###> symfony/messenger ###
-MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
-###< symfony/messenger ###
-```
-
-And finally configure the plugin to use your transport:
-
-```yaml
-setono_sylius_partner_ads:
-    messenger:
-        transport: amqp
-```
-
-After this the Messenger will be automatically enabled in this plugin and subsequently it will send an asynchronous request to Partner Ads instead of a synchronous.
+If a notification fails (e.g. Partner Ads is down), the conversion stays pending and is retried on subsequent runs. After 10 unsuccessful tries (configurable with `--max-tries`) the conversion is marked as failed, and the last error is saved on the conversion for debugging.
 
 [ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
 [ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license

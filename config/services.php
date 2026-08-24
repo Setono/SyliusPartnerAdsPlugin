@@ -11,15 +11,13 @@ use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculator;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
 use Setono\SyliusPartnerAdsPlugin\Client\Client;
 use Setono\SyliusPartnerAdsPlugin\Client\ClientInterface;
-use Setono\SyliusPartnerAdsPlugin\Context\ProgramContext;
-use Setono\SyliusPartnerAdsPlugin\Context\ProgramContextInterface;
+use Setono\SyliusPartnerAdsPlugin\Command\ProcessConversionsCommand;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandler;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
-use Setono\SyliusPartnerAdsPlugin\EventListener\NotifySubscriber;
+use Setono\SyliusPartnerAdsPlugin\EventListener\CreateConversionSubscriber;
 use Setono\SyliusPartnerAdsPlugin\EventListener\SetCookieSubscriber;
 use Setono\SyliusPartnerAdsPlugin\Form\Type\ProgramType;
 use Setono\SyliusPartnerAdsPlugin\Menu\AdminMenuListener;
-use Setono\SyliusPartnerAdsPlugin\Message\Handler\NotifyHandler;
 use Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProvider;
 use Setono\SyliusPartnerAdsPlugin\UrlProvider\NotifyUrlProviderInterface;
 
@@ -61,24 +59,26 @@ return static function (ContainerConfigurator $container): void {
         ]);
     $services->alias(CookieHandlerInterface::class, CookieHandler::class);
 
-    $services->set(ProgramContext::class)
+    $services->set(CreateConversionSubscriber::class)
         ->args([
-            service('sylius.context.channel.composite'),
-            // repository service created by AbstractResourceExtension::registerResources()
-            service('setono_sylius_partner_ads.repository.program'),
-        ]);
-    $services->alias(ProgramContextInterface::class, ProgramContext::class);
-
-    $services->set(NotifySubscriber::class)
-        ->args([
-            // alias created by RegisterCommandBusPass
-            service('setono_sylius_partner_ads.command_bus'),
+            service('request_stack'),
             service(CookieHandlerInterface::class),
-            service(OrderTotalCalculatorInterface::class),
-            service(ProgramContextInterface::class),
-            service('sylius.repository.order'),
+            // factory and repository services created by AbstractResourceExtension::registerResources()
+            service('setono_sylius_partner_ads.factory.conversion'),
+            service('setono_sylius_partner_ads.repository.conversion'),
         ])
         ->tag('kernel.event_subscriber');
+
+    $services->set(ProcessConversionsCommand::class)
+        ->args([
+            service('setono_sylius_partner_ads.repository.conversion'),
+            service('setono_sylius_partner_ads.repository.program'),
+            service(ClientInterface::class),
+            service(OrderTotalCalculatorInterface::class),
+            // manager service created by AbstractResourceExtension::registerResources()
+            service('setono_sylius_partner_ads.manager.conversion'),
+        ])
+        ->tag('console.command');
 
     $services->set(SetCookieSubscriber::class)
         ->args([
@@ -93,12 +93,6 @@ return static function (ContainerConfigurator $container): void {
             '%setono_sylius_partner_ads.form.program.validation_groups%',
         ])
         ->tag('form.type');
-
-    $services->set(NotifyHandler::class)
-        ->args([
-            service(ClientInterface::class),
-        ])
-        ->tag('messenger.message_handler');
 
     $services->set(AdminMenuListener::class)
         ->tag('kernel.event_listener', [

@@ -8,7 +8,6 @@ use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculator;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\SetonoSyliusPartnerAdsExtension;
-use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCase
@@ -28,11 +27,10 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.query_parameter', 'paid');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.cookie.name', 'setono_sylius_partner_ads_cookie');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.cookie.expire', 40);
-        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.messenger.command_bus', 'sylius.command_bus');
-        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.messenger.transport');
 
         // proves registerResources() ran
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.model.program.class');
+        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.model.conversion.class');
 
         // proves services.php was loaded
         $this->assertContainerBuilderHasService(OrderTotalCalculator::class);
@@ -75,31 +73,5 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
                 ],
             ],
         ]], $container->getExtensionConfig('sylius_grid'));
-    }
-
-    #[Test]
-    public function it_does_not_prepend_messenger_routing_when_no_transport_is_configured(): void
-    {
-        $container = new ContainerBuilder();
-        (new SetonoSyliusPartnerAdsExtension())->prepend($container);
-
-        self::assertSame([], $container->getExtensionConfig('framework'));
-    }
-
-    #[Test]
-    public function it_prepends_messenger_routing_when_a_transport_is_configured(): void
-    {
-        $container = new ContainerBuilder();
-        $container->prependExtensionConfig('setono_sylius_partner_ads', ['messenger' => ['transport' => 'amqp']]);
-
-        (new SetonoSyliusPartnerAdsExtension())->prepend($container);
-
-        self::assertSame([[
-            'messenger' => [
-                'routing' => [
-                    Notify::class => 'amqp',
-                ],
-            ],
-        ]], $container->getExtensionConfig('framework'));
     }
 }

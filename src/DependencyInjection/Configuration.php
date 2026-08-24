@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
 use Buzz\Client\BuzzClientInterface;
+use Setono\SyliusPartnerAdsPlugin\Doctrine\ORM\ConversionRepository;
 use Setono\SyliusPartnerAdsPlugin\Doctrine\ORM\ProgramRepository;
 use Setono\SyliusPartnerAdsPlugin\Form\Type\ProgramType;
+use Setono\SyliusPartnerAdsPlugin\Model\Conversion;
 use Setono\SyliusPartnerAdsPlugin\Model\Program;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
@@ -47,6 +49,20 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+                        ->arrayNode('conversion')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->variableNode('options')->end()
+                                ->arrayNode('classes')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->scalarNode('model')->defaultValue(Conversion::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('repository')->defaultValue(ConversionRepository::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('factory')->defaultValue(Factory::class)->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('urls')
@@ -80,24 +96,6 @@ final class Configuration implements ConfigurationInterface
                             ->info('The number of days before the cookie expires. Partner Ads\' official docs says it should be 40')
                         ->end()
                     ->end()
-                ->end()
-                ->arrayNode('messenger')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('command_bus')
-                            ->cannotBeEmpty()
-                            ->defaultValue('sylius.command_bus')
-                            ->example('sylius.command_bus')
-                            ->info('The service id for the message bus you use for commands')
-                        ->end()
-                        ->scalarNode('transport')
-                            ->cannotBeEmpty()
-                            ->defaultNull()
-                            ->info('The transport to use if you would like HTTP requests to be async (which is a very good choice on production)')
-                            ->example('amqp')
-                        ->end()
-                    ->end()
-
                 ->end()
             ->end()
         ;

@@ -32,6 +32,8 @@ final class RegisterHttpClientPass implements CompilerPassInterface
 
             $definition = new Definition(Curl::class, [
                 new Reference('setono_sylius_partner_ads.http_client.response_factory'),
+                // Buzz defaults to no timeout at all - make sure a hanging Partner Ads endpoint cannot hang the caller
+                ['timeout' => 30],
             ]);
             $container->setDefinition($httpClientServiceId, $definition);
         } else {
