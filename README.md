@@ -19,6 +19,8 @@ Because the notification happens out-of-band, a slow or failing Partner Ads endp
 | Symfony      | ^6.4 \|\| ^7.4 |
 
 > For Sylius 1.10 use the [`2.x`](https://github.com/Setono/SyliusPartnerAdsPlugin/tree/2.x) version of this plugin.
+>
+> Upgrading from 2.x? Read [UPGRADE.md](UPGRADE.md) - several steps are required.
 
 ## Installation
 
