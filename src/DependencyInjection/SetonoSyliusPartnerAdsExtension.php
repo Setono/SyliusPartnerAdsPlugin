@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
+use Setono\SyliusPartnerAdsPlugin\NotifyWhen;
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,6 +22,7 @@ final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension im
          *     resources: array<string, mixed>,
          *     http_client: string|null,
          *     urls: array{notify: string},
+         *     notify_when: string,
          *     query_parameter: string,
          *     cookie: array{name: string, expire: int}
          * } $config
@@ -33,6 +35,7 @@ final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension im
         $container->setParameter('setono_sylius_partner_ads.query_parameter', $config['query_parameter']);
         $container->setParameter('setono_sylius_partner_ads.cookie.name', $config['cookie']['name']);
         $container->setParameter('setono_sylius_partner_ads.cookie.expire', $config['cookie']['expire']);
+        $container->setParameter('setono_sylius_partner_ads.notify_when', NotifyWhen::from($config['notify_when']));
 
         $this->registerResources('setono_sylius_partner_ads', $config['driver'], $config['resources'], $container);
 

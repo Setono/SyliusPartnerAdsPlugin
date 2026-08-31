@@ -6,9 +6,9 @@
 
 This plugin will track sales made by Partner Ads affiliates.
 
-It works by saving the affiliate partner id in a cookie when the visitor lands on your shop through an affiliate link. When the visitor completes an order, the plugin stores a *conversion* referencing the order and the partner id. A console command - meant to be run periodically via cron - then notifies Partner Ads about conversions whose orders have been **paid**, telling them to credit the affiliate partner.
+It works by saving the affiliate partner id in a cookie when the visitor lands on your shop through an affiliate link. When the visitor completes an order, the plugin stores a *conversion* referencing the order and the partner id. A console command - meant to be run periodically via cron - then notifies Partner Ads about conversions whose orders have been **completed** (or, if you prefer, **paid** - see [step 8](#step-8-optional-choose-when-to-notify-partner-ads)), telling them to credit the affiliate partner.
 
-Because the notification happens out-of-band, a slow or failing Partner Ads endpoint can never affect your customers' checkout, unpaid orders are never reported, and failed notifications are retried automatically on the next run.
+Because the notification happens out-of-band, a slow or failing Partner Ads endpoint can never affect your customers' checkout, orders that get cancelled before the command runs are never reported, and failed notifications are retried automatically on the next run.
 
 ## Requirements
 
@@ -78,13 +78,26 @@ Login to your Sylius app admin and go to the Partner Ads page and click "Create"
 
 ### Step 7: Schedule the process command
 
-Conversions are sent to Partner Ads by a console command that only picks up conversions whose orders have been paid. Schedule it via cron (every 5-15 minutes is fine - Partner Ads does not need real-time notifications):
+Conversions are sent to Partner Ads by a console command that picks up conversions whose orders have been completed (or paid, see step 8). Schedule it via cron (every 5-15 minutes is fine - Partner Ads does not need real-time notifications):
 
 ```
 */10 * * * * php /path/to/your/app/bin/console setono:sylius-partner-ads:process-conversions
 ```
 
 If a notification fails (e.g. Partner Ads is down), the conversion stays pending and is retried on subsequent runs. After 10 unsuccessful tries (configurable with `--max-tries`) the conversion is marked as failed, and the last error is saved on the conversion for debugging.
+
+### Step 8 (optional): Choose when to notify Partner Ads
+
+By default, Partner Ads is notified as soon as the customer has completed the checkout, i.e. when the order is placed. This is how affiliate networks usually work: the sale is tracked right away, and if the order is never paid you cancel the sale in the Partner Ads panel.
+
+If you would rather only report orders that have actually been paid, configure:
+
+```yaml
+setono_sylius_partner_ads:
+    notify_when: paid # defaults to 'completed'
+```
+
+In both modes, conversions for orders that have been cancelled are never sent.
 
 [ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
 [ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license

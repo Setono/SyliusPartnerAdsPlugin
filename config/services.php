@@ -77,6 +77,7 @@ return static function (ContainerConfigurator $container): void {
             service(OrderTotalCalculatorInterface::class),
             // manager service created by AbstractResourceExtension::registerResources()
             service('setono_sylius_partner_ads.manager.conversion'),
+            '%setono_sylius_partner_ads.notify_when%',
         ])
         ->tag('console.command');
 

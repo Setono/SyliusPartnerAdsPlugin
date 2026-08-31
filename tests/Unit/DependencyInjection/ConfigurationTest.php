@@ -49,6 +49,22 @@ final class ConfigurationTest extends TestCase
     }
 
     #[Test]
+    public function it_accepts_paid_as_notify_when(): void
+    {
+        $this->assertConfigurationIsValid([
+            ['notify_when' => 'paid'],
+        ]);
+    }
+
+    #[Test]
+    public function it_rejects_an_unknown_notify_when(): void
+    {
+        $this->assertConfigurationIsInvalid([
+            ['notify_when' => 'fulfilled'],
+        ]);
+    }
+
+    #[Test]
     public function it_rejects_an_empty_http_client(): void
     {
         $this->assertConfigurationIsInvalid([

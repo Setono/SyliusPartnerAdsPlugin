@@ -8,6 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
 use Setono\SyliusPartnerAdsPlugin\Client\ClientInterface;
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
+use Setono\SyliusPartnerAdsPlugin\NotifyWhen;
 use Setono\SyliusPartnerAdsPlugin\Repository\ConversionRepositoryInterface;
 use Setono\SyliusPartnerAdsPlugin\Repository\ProgramRepositoryInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -19,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'setono:sylius-partner-ads:process-conversions',
-    description: 'Notifies Partner Ads about pending conversions whose orders have been paid',
+    description: 'Notifies Partner Ads about pending conversions whose orders are eligible',
 )]
 final class ProcessConversionsCommand extends Command
 {
@@ -29,6 +30,7 @@ final class ProcessConversionsCommand extends Command
         private readonly ClientInterface $client,
         private readonly OrderTotalCalculatorInterface $orderTotalCalculator,
         private readonly ObjectManager $conversionManager,
+        private readonly NotifyWhen $notifyWhen,
     ) {
         parent::__construct();
     }
@@ -48,7 +50,7 @@ final class ProcessConversionsCommand extends Command
         $limit = max(1, (int) $input->getOption('limit'));
         $maxTries = max(1, (int) $input->getOption('max-tries'));
 
-        $conversions = $this->conversionRepository->findPendingForPaidOrders($limit);
+        $conversions = $this->conversionRepository->findPending($limit, $this->notifyWhen);
 
         if ([] === $conversions) {
             $io->success('No pending conversions to process');

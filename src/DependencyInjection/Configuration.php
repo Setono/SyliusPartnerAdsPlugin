@@ -10,6 +10,7 @@ use Setono\SyliusPartnerAdsPlugin\Doctrine\ORM\ProgramRepository;
 use Setono\SyliusPartnerAdsPlugin\Form\Type\ProgramType;
 use Setono\SyliusPartnerAdsPlugin\Model\Conversion;
 use Setono\SyliusPartnerAdsPlugin\Model\Program;
+use Setono\SyliusPartnerAdsPlugin\NotifyWhen;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;
@@ -75,6 +76,11 @@ final class Configuration implements ConfigurationInterface
                             ->info('The URL to use when notifying Partner Ads of a new order. Remember to include the variables')
                         ->end()
                     ->end()
+                ->end()
+                ->enumNode('notify_when')
+                    ->values(NotifyWhen::values())
+                    ->defaultValue(NotifyWhen::Completed->value)
+                    ->info('When to notify Partner Ads about a conversion: "completed" (the default) notifies as soon as the order is placed, "paid" only when the order has been paid')
                 ->end()
                 ->scalarNode('query_parameter')
                     ->cannotBeEmpty()

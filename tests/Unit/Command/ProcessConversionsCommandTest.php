@@ -16,6 +16,7 @@ use Setono\SyliusPartnerAdsPlugin\Command\ProcessConversionsCommand;
 use Setono\SyliusPartnerAdsPlugin\Model\Conversion;
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
 use Setono\SyliusPartnerAdsPlugin\Model\ProgramInterface;
+use Setono\SyliusPartnerAdsPlugin\NotifyWhen;
 use Setono\SyliusPartnerAdsPlugin\Repository\ConversionRepositoryInterface;
 use Setono\SyliusPartnerAdsPlugin\Repository\ProgramRepositoryInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
@@ -54,7 +55,7 @@ final class ProcessConversionsCommandTest extends TestCase
     #[Test]
     public function it_succeeds_when_there_are_no_pending_conversions(): void
     {
-        $this->conversionRepository->findPendingForPaidOrders(100)->willReturn([]);
+        $this->conversionRepository->findPending(100, NotifyWhen::Completed)->willReturn([]);
 
         $this->client->notify(Argument::cetera())->shouldNotBeCalled();
 
@@ -65,11 +66,22 @@ final class ProcessConversionsCommandTest extends TestCase
     }
 
     #[Test]
+    public function it_queries_the_repository_with_the_configured_notify_when(): void
+    {
+        $this->conversionRepository->findPending(100, NotifyWhen::Paid)->willReturn([])->shouldBeCalled();
+
+        $commandTester = $this->getCommandTester(NotifyWhen::Paid);
+        $exitCode = $commandTester->execute([]);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+    }
+
+    #[Test]
     public function it_notifies_partner_ads_and_marks_the_conversion_as_notified(): void
     {
         $conversion = $this->getConversion();
 
-        $this->conversionRepository->findPendingForPaidOrders(100)->willReturn([$conversion]);
+        $this->conversionRepository->findPending(100, NotifyWhen::Completed)->willReturn([$conversion]);
 
         $this->client
             ->notify(123, '000000042', 571.91, 42, '127.0.0.1')
@@ -92,7 +104,7 @@ final class ProcessConversionsCommandTest extends TestCase
     {
         $conversion = $this->getConversion();
 
-        $this->conversionRepository->findPendingForPaidOrders(100)->willReturn([$conversion]);
+        $this->conversionRepository->findPending(100, NotifyWhen::Completed)->willReturn([$conversion]);
 
         $this->client
             ->notify(Argument::cetera())
@@ -115,7 +127,7 @@ final class ProcessConversionsCommandTest extends TestCase
     {
         $conversion = $this->getConversion();
 
-        $this->conversionRepository->findPendingForPaidOrders(100)->willReturn([$conversion]);
+        $this->conversionRepository->findPending(100, NotifyWhen::Completed)->willReturn([$conversion]);
 
         $this->client
             ->notify(Argument::cetera())
@@ -155,7 +167,7 @@ final class ProcessConversionsCommandTest extends TestCase
         return $conversion;
     }
 
-    private function getCommandTester(): CommandTester
+    private function getCommandTester(NotifyWhen $notifyWhen = NotifyWhen::Completed): CommandTester
     {
         return new CommandTester(new ProcessConversionsCommand(
             $this->conversionRepository->reveal(),
@@ -163,6 +175,7 @@ final class ProcessConversionsCommandTest extends TestCase
             $this->client->reveal(),
             $this->orderTotalCalculator->reveal(),
             $this->conversionManager->reveal(),
+            $notifyWhen,
         ));
     }
 }
