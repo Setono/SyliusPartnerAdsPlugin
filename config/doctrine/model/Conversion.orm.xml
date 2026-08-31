@@ -22,9 +22,15 @@
         <field name="notifiedAt" type="datetime_immutable" nullable="true" />
         <field name="createdAt" type="datetime_immutable" />
 
-        <one-to-one field="order" target-entity="Sylius\Component\Core\Model\OrderInterface">
-            <join-column name="order_id" nullable="false" unique="true" on-delete="CASCADE" />
-        </one-to-one>
+        <!--
+            Deliberately many-to-one and NOT one-to-one/unique. A unique constraint on the order could only ever
+            fail inside the customer's checkout request (two concurrent checkout-complete requests for the same cart
+            both inserting a conversion), and failing there fails the checkout. See CreateConversionSubscriber for
+            the full reasoning. Uniqueness of *notifications* is enforced by ProcessConversionsCommand instead.
+        -->
+        <many-to-one field="order" target-entity="Sylius\Component\Core\Model\OrderInterface">
+            <join-column name="order_id" nullable="false" on-delete="CASCADE" />
+        </many-to-one>
     </mapped-superclass>
 
 </doctrine-mapping>

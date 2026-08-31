@@ -19,6 +19,7 @@ setono_sylius_partner_ads:
         state_pending: Afventer
         state_notified: Notificeret
         state_failed: Fejlet
+        state_skipped: Sprunget over
         tries: Forsøg
         last_error: Seneste fejl
         notified_at: Notificeret den

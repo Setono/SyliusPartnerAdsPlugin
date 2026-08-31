@@ -126,6 +126,7 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
                                     'setono_sylius_partner_ads.ui.state_pending' => ConversionInterface::STATE_PENDING,
                                     'setono_sylius_partner_ads.ui.state_notified' => ConversionInterface::STATE_NOTIFIED,
                                     'setono_sylius_partner_ads.ui.state_failed' => ConversionInterface::STATE_FAILED,
+                                    'setono_sylius_partner_ads.ui.state_skipped' => ConversionInterface::STATE_SKIPPED,
                                 ],
                             ],
                         ],

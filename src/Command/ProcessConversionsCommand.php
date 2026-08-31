@@ -18,7 +18,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Lock\LockFactory;
 
+/**
+ * Sends pending conversions to Partner Ads. This command is the single place that talks to Partner Ads, and it is
+ * therefore also the place that guarantees "at most one notification per order" (see CreateConversionSubscriber for
+ * why that is not guaranteed by the database).
+ */
 #[AsCommand(
     name: 'setono:sylius-partner-ads:process-conversions',
     description: 'Notifies Partner Ads about pending conversions whose orders are eligible',
@@ -27,12 +33,25 @@ final class ProcessConversionsCommand extends Command
 {
     use ORMTrait;
 
+    /**
+     * Two overlapping runs (e.g. a slow run and the next cron tick) would both read the same pending
+     * conversions and notify Partner Ads twice about the same order, so only one run may be active at a time.
+     */
+    public const LOCK_RESOURCE = 'setono_sylius_partner_ads_process_conversions';
+
+    /**
+     * How long a run may hold the lock, for lock stores that support expiration. Generous on purpose: a run is
+     * bounded by --limit times the HTTP client timeout, and a lock that expires mid-run would defeat its purpose.
+     */
+    private const LOCK_TTL = 3600.0;
+
     public function __construct(
         private readonly ConversionRepositoryInterface $conversionRepository,
         private readonly ProgramRepositoryInterface $programRepository,
         private readonly ClientInterface $client,
         private readonly OrderTotalCalculatorInterface $orderTotalCalculator,
         ManagerRegistry $managerRegistry,
+        private readonly LockFactory $lockFactory,
         private readonly NotifyWhen $notifyWhen,
     ) {
         $this->managerRegistry = $managerRegistry;
@@ -52,6 +71,22 @@ final class ProcessConversionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $lock = $this->lockFactory->createLock(self::LOCK_RESOURCE, self::LOCK_TTL);
+        if (!$lock->acquire()) {
+            $io->warning('Another instance of this command is already running - exiting');
+
+            return Command::SUCCESS;
+        }
+
+        try {
+            return $this->process($input, $io);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    private function process(InputInterface $input, SymfonyStyle $io): int
+    {
         $limit = max(1, (int) $input->getOption('limit'));
         $maxTries = max(1, (int) $input->getOption('max-tries'));
 
@@ -64,9 +99,22 @@ final class ProcessConversionsCommand extends Command
         }
 
         $notified = 0;
+        $skipped = 0;
         $failed = 0;
 
         foreach ($conversions as $conversion) {
+            // More than one conversion can exist for the same order (see CreateConversionSubscriber for why).
+            // The first one to be notified wins; any other conversion for that order is skipped, never sent.
+            if ($this->isAlreadyNotified($conversion)) {
+                $conversion->setState(ConversionInterface::STATE_SKIPPED);
+
+                ++$skipped;
+
+                $this->getManager($conversion)->flush();
+
+                continue;
+            }
+
             try {
                 $this->notify($conversion);
 
@@ -88,12 +136,26 @@ final class ProcessConversionsCommand extends Command
                 $io->error(sprintf('Conversion %d failed: %s', (int) $conversion->getId(), $e->getMessage()));
             }
 
+            // flush after each conversion so that a crash mid-run cannot lose a notification we already sent
             $this->getManager($conversion)->flush();
         }
 
-        $io->success(sprintf('Processed %d conversion(s): %d notified, %d failed', count($conversions), $notified, $failed));
+        $io->success(sprintf(
+            'Processed %d conversion(s): %d notified, %d skipped, %d failed',
+            count($conversions),
+            $notified,
+            $skipped,
+            $failed,
+        ));
 
         return $failed > 0 ? Command::FAILURE : Command::SUCCESS;
+    }
+
+    private function isAlreadyNotified(ConversionInterface $conversion): bool
+    {
+        $order = $conversion->getOrder();
+
+        return null !== $order && $this->conversionRepository->hasNotifiedConversionForOrder($order);
     }
 
     private function notify(ConversionInterface $conversion): void

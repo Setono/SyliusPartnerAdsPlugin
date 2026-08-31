@@ -76,6 +76,7 @@ return static function (ContainerConfigurator $container): void {
             service(ClientInterface::class),
             service(OrderTotalCalculatorInterface::class),
             service('doctrine'),
+            service('lock.factory'),
             '%setono_sylius_partner_ads.notify_when%',
         ])
         ->tag('console.command');

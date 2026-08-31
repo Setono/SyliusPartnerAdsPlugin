@@ -17,9 +17,12 @@ class ConversionRepository extends EntityRepository implements ConversionReposit
 {
     public function findOneByOrder(OrderInterface $order): ?ConversionInterface
     {
+        // more than one conversion can exist for an order (see CreateConversionSubscriber), so cap the result
         $obj = $this->createQueryBuilder('o')
             ->andWhere('o.order = :order')
             ->setParameter('order', $order)
+            ->orderBy('o.id', 'ASC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -27,6 +30,21 @@ class ConversionRepository extends EntityRepository implements ConversionReposit
         Assert::nullOrIsInstanceOf($obj, ConversionInterface::class);
 
         return $obj;
+    }
+
+    public function hasNotifiedConversionForOrder(OrderInterface $order): bool
+    {
+        $count = (int) $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->andWhere('o.order = :order')
+            ->andWhere('o.state = :state')
+            ->setParameter('order', $order)
+            ->setParameter('state', ConversionInterface::STATE_NOTIFIED)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        return $count > 0;
     }
 
     public function findPending(int $limit, NotifyWhen $notifyWhen): array

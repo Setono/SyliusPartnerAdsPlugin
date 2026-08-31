@@ -15,6 +15,12 @@ interface ConversionInterface extends ResourceInterface
 
     public const STATE_FAILED = 'failed';
 
+    /**
+     * The conversion was not sent because another conversion for the same order has already been notified.
+     * More than one conversion can exist for an order - see CreateConversionSubscriber for why.
+     */
+    public const STATE_SKIPPED = 'skipped';
+
     public function getId(): ?int;
 
     public function getOrder(): ?OrderInterface;

@@ -86,6 +86,8 @@ Conversions are sent to Partner Ads by a console command that picks up conversio
 
 If a notification fails (e.g. Partner Ads is down), the conversion stays pending and is retried on subsequent runs. After 10 unsuccessful tries (configurable with `--max-tries`) the conversion is marked as failed, and the last error is saved on the conversion for debugging.
 
+The command takes a lock while it runs, so overlapping runs (e.g. a slow run and the next cron tick) cannot notify Partner Ads twice about the same order. It uses your application's default lock store - if you run cron on more than one server, configure a shared store (e.g. Redis or your database) as described in the [Symfony lock documentation](https://symfony.com/doc/current/lock.html).
+
 ### Step 8 (optional): Choose when to notify Partner Ads
 
 By default, Partner Ads is notified as soon as the customer has completed the checkout, i.e. when the order is placed. This is how affiliate networks usually work: the sale is tracked right away, and if the order is never paid you cancel the sale in the Partner Ads panel.
@@ -98,6 +100,14 @@ setono_sylius_partner_ads:
 ```
 
 In both modes, conversions for orders that have been cancelled are never sent.
+
+## Design notes
+
+A few decisions in this plugin are deliberate and worth knowing about:
+
+- **Nothing that can fail happens during checkout.** The plugin only stores a small conversion row when an order is completed; the HTTP request to Partner Ads happens later in the console command. A slow or failing Partner Ads endpoint can therefore never affect your customers.
+- **There is no unique constraint on the conversion's order.** Two concurrent checkout-complete requests for the same cart (a double click, a browser retry, a payment return racing the customer's return) can both create a conversion for the same order. A unique constraint would stop the duplicate by throwing an exception *inside the checkout*, failing the order for the customer. Instead, duplicates are allowed to exist, and the console command guarantees that Partner Ads is notified at most once per order: once a conversion for an order has been notified, any other conversion for that order is marked as *skipped*.
+- **The console command is locked** so that two overlapping runs cannot both send the same conversion.
 
 [ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
 [ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license

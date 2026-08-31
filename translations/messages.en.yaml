@@ -19,6 +19,7 @@ setono_sylius_partner_ads:
         state_pending: Pending
         state_notified: Notified
         state_failed: Failed
+        state_skipped: Skipped
         tries: Tries
         last_error: Last error
         notified_at: Notified at

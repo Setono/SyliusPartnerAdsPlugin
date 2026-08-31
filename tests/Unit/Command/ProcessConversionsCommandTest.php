@@ -24,6 +24,8 @@ use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\InMemoryStore;
 
 final class ProcessConversionsCommandTest extends TestCase
 {
@@ -47,6 +49,8 @@ final class ProcessConversionsCommandTest extends TestCase
     /** @var ObjectProphecy<EntityManagerInterface> */
     private ObjectProphecy $entityManager;
 
+    private LockFactory $lockFactory;
+
     protected function setUp(): void
     {
         $this->conversionRepository = $this->prophesize(ConversionRepositoryInterface::class);
@@ -56,6 +60,7 @@ final class ProcessConversionsCommandTest extends TestCase
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->managerRegistry = $this->prophesize(ManagerRegistry::class);
         $this->managerRegistry->getManagerForClass(Conversion::class)->willReturn($this->entityManager->reveal());
+        $this->lockFactory = new LockFactory(new InMemoryStore());
     }
 
     #[Test]
@@ -83,6 +88,31 @@ final class ProcessConversionsCommandTest extends TestCase
     }
 
     #[Test]
+    public function it_does_nothing_when_another_instance_is_already_running(): void
+    {
+        $lock = $this->lockFactory->createLock(ProcessConversionsCommand::LOCK_RESOURCE);
+        self::assertTrue($lock->acquire());
+
+        $this->conversionRepository->findPending(Argument::cetera())->shouldNotBeCalled();
+
+        $commandTester = $this->getCommandTester();
+        $exitCode = $commandTester->execute([]);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertStringContainsString('already running', $commandTester->getDisplay());
+    }
+
+    #[Test]
+    public function it_releases_the_lock_when_done(): void
+    {
+        $this->conversionRepository->findPending(100, NotifyWhen::Completed)->willReturn([]);
+
+        $this->getCommandTester()->execute([]);
+
+        self::assertTrue($this->lockFactory->createLock(ProcessConversionsCommand::LOCK_RESOURCE)->acquire());
+    }
+
+    #[Test]
     public function it_notifies_partner_ads_and_marks_the_conversion_as_notified(): void
     {
         $conversion = $this->getConversion();
@@ -103,6 +133,29 @@ final class ProcessConversionsCommandTest extends TestCase
         self::assertSame(ConversionInterface::STATE_NOTIFIED, $conversion->getState());
         self::assertNotNull($conversion->getNotifiedAt());
         self::assertSame(0, $conversion->getTries());
+    }
+
+    #[Test]
+    public function it_skips_a_conversion_when_the_order_has_already_been_notified(): void
+    {
+        $conversion = $this->getConversion();
+        $order = $conversion->getOrder();
+        self::assertNotNull($order);
+
+        $this->conversionRepository->findPending(100, NotifyWhen::Completed)->willReturn([$conversion]);
+        $this->conversionRepository->hasNotifiedConversionForOrder($order)->willReturn(true);
+
+        $this->client->notify(Argument::cetera())->shouldNotBeCalled();
+
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $commandTester = $this->getCommandTester();
+        $exitCode = $commandTester->execute([]);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertSame(ConversionInterface::STATE_SKIPPED, $conversion->getState());
+        self::assertNull($conversion->getNotifiedAt());
+        self::assertStringContainsString('1 skipped', $commandTester->getDisplay());
     }
 
     #[Test]
@@ -165,6 +218,7 @@ final class ProcessConversionsCommandTest extends TestCase
 
         $this->programRepository->findOneByChannel($channel->reveal())->willReturn($program->reveal());
         $this->orderTotalCalculator->get($order->reveal())->willReturn(571.91);
+        $this->conversionRepository->hasNotifiedConversionForOrder($order->reveal())->willReturn(false);
 
         $conversion = new Conversion();
         $conversion->setOrder($order->reveal());
@@ -181,6 +235,7 @@ final class ProcessConversionsCommandTest extends TestCase
             $this->client->reveal(),
             $this->orderTotalCalculator->reveal(),
             $this->managerRegistry->reveal(),
+            $this->lockFactory,
             $notifyWhen,
         ));
     }
