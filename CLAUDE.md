@@ -7,8 +7,10 @@ file covers what you need to know to change the plugin.
 
 Sylius 2 plugin that tracks sales for the Danish affiliate network Partner Ads:
 
-1. A visitor arrives through an affiliate link carrying `?paid=<partner id>`. `SetCookieSubscriber` stores the
-   partner id in a cookie (40 days by default) - only if it is a positive integer (`PartnerIdParser`).
+1. A visitor arrives through an affiliate link carrying `?paid=<partner id>`. `CapturePartnerIdSubscriber` stores
+   the partner id - only if it is a positive integer (`PartnerIdParser`) - through `PartnerIdStorageInterface`,
+   whose default implementation writes it into the visitor's client metadata (setono/client-bundle) with the
+   `attribution_window` (40 days by default) as TTL. The plugin sets no cookie of its own.
 2. When that visitor completes an order, `CreateConversionSubscriber` (on `sylius.order.post_complete`) stores a
    pending `Conversion` row referencing the order and the partner id. No HTTP happens here.
 3. `setono:sylius-partner-ads:process-conversions`, run via cron, picks up pending conversions whose order has
@@ -18,8 +20,9 @@ Sylius 2 plugin that tracks sales for the Danish affiliate network Partner Ads:
 
 ## Invariants - do not break these
 
-- **Nothing that can fail runs inside the customer's checkout request.** The only checkout-time work is a
-  cookie read and a single insert. No HTTP calls, no try/catch that could leave a closed entity manager
+- **Nothing that can fail runs inside the customer's checkout request.** The only checkout-time work is one
+  partner id read (a single lazy SELECT on the client metadata by setono/client-bundle - the storage never writes
+  at checkout) and a single insert. No HTTP calls, no try/catch that could leave a closed entity manager
   behind, no constraint that can be violated (see next point). Read the docblock on `CreateConversionSubscriber`
   before touching it.
 - **There is deliberately no unique constraint on `conversion.order`** (the association is many-to-one).
@@ -29,7 +32,7 @@ Sylius 2 plugin that tracks sales for the Danish affiliate network Partner Ads:
 - **The process command is locked** (`symfony/lock`, resource `setono_sylius_partner_ads_process_conversions`)
   so overlapping cron runs cannot double-send. The lock is released explicitly in a `finally` block.
 - **Only a positive integer is ever a partner id.** Empty, garbage, zero, negative, or array values from the
-  query string or the cookie are treated as absent - never cast to `0` and reported.
+  query string or the stored metadata are treated as absent - never cast to `0` and reported.
 - **Document the why.** Non-obvious decisions are explained where they live (docblocks, XML mapping comments,
   the README's "Design notes"). Keep that up to date when you change behaviour.
 
@@ -40,9 +43,10 @@ Sylius 2 plugin that tracks sales for the Danish affiliate network Partner Ads:
   bundle turns them into entities and registers `setono_sylius_partner_ads.{factory,repository,manager}.{program,conversion}`.
 - `src/Doctrine/ORM` - repositories. `ConversionRepository::findPending()` holds the eligibility rules
   (pending + checkout completed + not cancelled, plus paid when `NotifyWhen::Paid`).
-- `src/EventListener` - the two subscribers above. `src/CookieHandler` - cookie read/write; `has()` is only
-  true for a valid partner id and `get()` asserts that. `src/Parser/PartnerIdParser` - the single place that
-  validates a raw partner id value.
+- `src/EventListener` - the two subscribers above. `src/PartnerIdStorage` - where the partner id lives between
+  the affiliate click and the order: `PartnerIdStorageInterface`, implemented by `ClientMetadataPartnerIdStorage`
+  (client bundle metadata under a namespaced key, TTL from `attribution_window`, re-validates on read, never
+  removes). `src/Parser/PartnerIdParser` - the single place that validates a raw partner id value.
 - `src/Command/ProcessConversionsCommand` - the cron command. `src/Enum/NotifyWhen` - the `notify_when`
   config value.
 - `src/Client` + `src/UrlProvider` - the HTTP call. Placeholders in the notify URL are URL-encoded; any 2xx is
@@ -82,7 +86,8 @@ Sylius 2 plugin that tracks sales for the Danish affiliate network Partner Ads:
 - The test application lives in `tests/Application`. Functional tests (`tests/Functional`) that need a database
   use the `DATABASE_URL` in `tests/Application/.env` (a local MariaDB/MySQL, database
   `setono_sylius_partner_ads_test`) and **skip themselves when no database is reachable**. Create or update the
-  schema with `APP_ENV=test tests/Application/bin/console doctrine:schema:update --force`.
+  schema with `APP_ENV=test tests/Application/bin/console doctrine:schema:update --force` (this also creates the
+  client bundle's `setono_client__metadata`; the test application registers `SetonoClientBundle`).
   `dama/doctrine-test-bundle` wraps every test in a rolled-back transaction (this needs `use_savepoints: true`,
   see `tests/Application/config/packages/doctrine.yaml`). Build fixtures in tests so they tolerate pre-existing
   data - the CI database has the Sylius fixtures loaded (e.g. locale `en_US`, channel `FASHION_WEB`).

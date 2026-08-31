@@ -24,7 +24,7 @@ final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension im
          *     urls: array{notify: string},
          *     notify_when: string,
          *     query_parameter: string,
-         *     cookie: array{name: string, expire: int}
+         *     attribution_window: int
          * } $config
          */
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
@@ -33,8 +33,7 @@ final class SetonoSyliusPartnerAdsExtension extends AbstractResourceExtension im
         $container->setParameter('setono_sylius_partner_ads.http_client', $config['http_client']);
         $container->setParameter('setono_sylius_partner_ads.urls.notify', $config['urls']['notify']);
         $container->setParameter('setono_sylius_partner_ads.query_parameter', $config['query_parameter']);
-        $container->setParameter('setono_sylius_partner_ads.cookie.name', $config['cookie']['name']);
-        $container->setParameter('setono_sylius_partner_ads.cookie.expire', $config['cookie']['expire']);
+        $container->setParameter('setono_sylius_partner_ads.attribution_window', $config['attribution_window']);
         $container->setParameter('setono_sylius_partner_ads.notify_when', NotifyWhen::from($config['notify_when']));
 
         $this->registerResources('setono_sylius_partner_ads', $config['driver'], $config['resources'], $container);

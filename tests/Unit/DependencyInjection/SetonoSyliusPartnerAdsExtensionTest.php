@@ -10,6 +10,8 @@ use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculator;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\SetonoSyliusPartnerAdsExtension;
 use Setono\SyliusPartnerAdsPlugin\Enum\NotifyWhen;
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
+use Setono\SyliusPartnerAdsPlugin\PartnerIdStorage\ClientMetadataPartnerIdStorage;
+use Setono\SyliusPartnerAdsPlugin\PartnerIdStorage\PartnerIdStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCase
@@ -27,8 +29,7 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.http_client', 'psr18.http_client');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.urls.notify');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.query_parameter', 'paid');
-        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.cookie.name', 'setono_sylius_partner_ads_cookie');
-        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.cookie.expire', 40);
+        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.attribution_window', 40);
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.notify_when', NotifyWhen::Completed);
 
         // proves registerResources() ran
@@ -37,6 +38,12 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
 
         // proves services.php was loaded
         $this->assertContainerBuilderHasService(OrderTotalCalculator::class);
+        $this->assertContainerBuilderHasAlias(PartnerIdStorageInterface::class, ClientMetadataPartnerIdStorage::class);
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument(
+            ClientMetadataPartnerIdStorage::class,
+            1,
+            '%setono_sylius_partner_ads.attribution_window%',
+        );
     }
 
     #[Test]
