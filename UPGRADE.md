@@ -14,8 +14,9 @@ cron - sends the notifications. Read the whole list; several steps are required 
 | Sylius | 1.10 | ^2.0 |
 | Symfony | ^5.4 \|\| ^6.0 | ^6.4 \|\| ^7.4 |
 
-Dependencies: the plugin no longer requires `symfony/messenger`, `sylius/order` or `ext-mbstring`, and now requires
-`symfony/lock`, `symfony/console`, `doctrine/persistence`, `setono/doctrine-orm-trait` and `ext-filter`.
+Dependencies: the plugin no longer requires `symfony/messenger`, `sylius/order`, `ext-mbstring` or (directly)
+`symfony/http-foundation`, and now requires `setono/client-bundle`, `setono/client`, `symfony/lock`,
+`symfony/console`, `doctrine/persistence`, `setono/doctrine-orm-trait` and `ext-filter`.
 
 ### Installation
 
@@ -27,7 +28,9 @@ Dependencies: the plugin no longer requires `symfony/messenger`, `sylius/order` 
    (`setono_sylius_partner_ads_admin_program_*`); the new conversion routes are
    `setono_sylius_partner_ads_admin_conversion_index` and `..._delete`.
 3. The plugin must still be registered **before** `SyliusGridBundle` in `config/bundles.php`.
-4. Plugin files moved from `src/Resources/{config,translations}` to `config/` and `translations/`. This only
+4. **Register `Setono\ClientBundle\SetonoClientBundle`** in `config/bundles.php` (Symfony Flex may do it for
+   you). The plugin now keeps the partner id in the visitor's client metadata instead of a cookie of its own.
+5. Plugin files moved from `src/Resources/{config,translations}` to `config/` and `translations/`. This only
    matters if you referenced those paths directly.
 
 ### Configuration
@@ -43,14 +46,17 @@ Dependencies: the plugin no longer requires `symfony/messenger`, `sylius/order` 
   container fails to build with a message telling you what to install or configure.
 - **New `notify_when`** (`completed`, the default, or `paid`), see the README. `completed` corresponds to the
   2.x behaviour of reporting the order as soon as it was placed.
-- Unchanged: `urls.notify`, `query_parameter`, `cookie.name`, `cookie.expire`, `resources.program`.
-  New: `resources.conversion`.
+- **`cookie` node removed** (`name` and `expire`): the plugin no longer sets a cookie. Remove it from your
+  configuration or the container fails to build. **`attribution_window`** (days, default 40, minimum 1) replaces
+  `cookie.expire`; there is no replacement for `cookie.name`.
+- Unchanged: `urls.notify`, `query_parameter`, `resources.program`. New: `resources.conversion`.
 
 ### Database
 
 Run `doctrine:migrations:diff` and `doctrine:migrations:migrate`. The migration will:
 
 - create the new table `setono_sylius_partner_ads__conversion`;
+- create the client bundle's table `setono_client__metadata`, unless your application has it already;
 - on `setono_sylius_partner_ads__program`, drop the index `idx_enabled` and make `channel_id` `NOT NULL`. Make
   sure no program row has a `NULL` channel before migrating (the admin form has always required one).
 
@@ -74,7 +80,13 @@ than one server, configure a shared store (Redis, database) - see the README.
   `--max-tries`, default 10, after which the conversion is marked *failed*), Partner Ads is never notified more
   than once per order, and orders cancelled before the command runs are never reported. Notifications are
   therefore delayed by up to one cron interval.
-- **Partner id validation.** The affiliate query parameter (`?paid=`) and the cookie are only accepted when they
+- **Where the partner id is kept.** 2.x stored it in its own cookie (`setono_sylius_partner_ads_cookie`); 3.x
+  stores it in the visitor's client metadata (setono/client-bundle), identified by the bundle's `setono_client_id`
+  cookie. **Attributions in flight at upgrade time are lost**: the old cookie is ignored - it is not imported -
+  and simply expires. Every visitor now receives the bundle's cookie on every response; if you need consent
+  first, gate it with the bundle's `PreStoreCookieEvent` (visitors without the cookie are never attributed).
+  Each affiliate landing writes one row (or update) to `setono_client__metadata`.
+- **Partner id validation.** The affiliate query parameter (`?paid=`) and the stored value are only accepted when they
   hold a positive integer. Empty, malformed, zero, negative or array values are ignored - 2.x cast them to
   partner id `0`, which overwrote a legitimate attribution. A malformed link can no longer produce a 400.
 - **HTTP responses.** Any 2xx response from Partner Ads is a success; 2.x only accepted `200`.
@@ -90,11 +102,14 @@ than one server, configure a shared store (Redis, database) - see the README.
 
 - **Removed classes**: `EventListener\NotifySubscriber`, `Message\Command\Notify`,
   `Message\Handler\NotifyHandler`, `DependencyInjection\Compiler\RegisterCommandBusPass`,
-  `Context\ProgramContext`, `Context\ProgramContextInterface`, `Exception\InterfaceNotFoundException`
+  `Context\ProgramContext`, `Context\ProgramContextInterface`, `Exception\InterfaceNotFoundException`,
+  `CookieHandler\CookieHandler`, `CookieHandler\CookieHandlerInterface`, `EventListener\SetCookieSubscriber`
   (all in the `Setono\SyliusPartnerAdsPlugin` namespace).
 - **New classes** you may want to decorate or extend: `Model\Conversion` / `Model\ConversionInterface`,
   `Repository\ConversionRepositoryInterface`, `EventListener\CreateConversionSubscriber`,
-  `Command\ProcessConversionsCommand`, `Enum\NotifyWhen`, `Parser\PartnerIdParser`.
+  `Command\ProcessConversionsCommand`, `Enum\NotifyWhen`, `Parser\PartnerIdParser`,
+  `PartnerIdStorage\PartnerIdStorageInterface` / `PartnerIdStorage\ClientMetadataPartnerIdStorage` (swap this to
+  keep the partner id somewhere other than the client metadata), `EventListener\CapturePartnerIdSubscriber`.
 - **Service ids changed.** Services are now registered under their class name, with an alias for each interface.
   If you decorated a 2.x service, use the new id:
 
@@ -102,9 +117,9 @@ than one server, configure a shared store (Redis, database) - see the README.
   |---|---|
   | `setono_sylius_partner_ads.client.default` | `Setono\SyliusPartnerAdsPlugin\Client\Client` / `...\Client\ClientInterface` |
   | `setono_sylius_partner_ads.calculator.order_total` | `...\Calculator\OrderTotalCalculator` / `...\Calculator\OrderTotalCalculatorInterface` |
-  | `setono_sylius_partner_ads.cookie_handler.default` | `...\CookieHandler\CookieHandler` / `...\CookieHandler\CookieHandlerInterface` |
+  | `setono_sylius_partner_ads.cookie_handler.default` | `...\PartnerIdStorage\ClientMetadataPartnerIdStorage` / `...\PartnerIdStorage\PartnerIdStorageInterface` |
   | `setono_sylius_partner_ads.url_provider.notify` | `...\UrlProvider\NotifyUrlProvider` / `...\UrlProvider\NotifyUrlProviderInterface` |
-  | `setono_sylius_partner_ads.event_subscriber.set_cookie` | `...\EventListener\SetCookieSubscriber` |
+  | `setono_sylius_partner_ads.event_subscriber.set_cookie` | `...\EventListener\CapturePartnerIdSubscriber` |
   | `setono_sylius_partner_ads.event_subscriber.notify` | removed (see `...\EventListener\CreateConversionSubscriber`) |
   | `setono_sylius_partner_ads.context.program` | removed |
   | `setono_sylius_partner_ads.command_bus` | removed |
@@ -114,8 +129,6 @@ than one server, configure a shared store (Redis, database) - see the README.
   Unchanged: `setono_sylius_partner_ads.http_client` (alias to the configured PSR-18 client),
   `setono_sylius_partner_ads.http_client.request_factory`, and the resource services
   `setono_sylius_partner_ads.{factory,repository,manager}.program` (plus the same for `conversion`).
-- **`CookieHandlerInterface` semantics**: `has()` now returns `false` for a cookie that does not hold a valid
-  partner id, and `get()` throws in that case. Signatures are unchanged.
 - The public interfaces `ClientInterface`, `OrderTotalCalculatorInterface`, `NotifyUrlProviderInterface`,
   `ProgramRepositoryInterface` and `ProgramInterface` are unchanged.
 - The `Program` and `Conversion` models are Doctrine mapped superclasses, so a custom model class configured via

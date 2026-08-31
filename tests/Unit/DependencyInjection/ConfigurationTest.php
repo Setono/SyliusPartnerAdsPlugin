@@ -24,27 +24,40 @@ final class ConfigurationTest extends TestCase
         $this->assertConfigurationIsValid([
             [
                 'query_parameter' => 'paid',
-                'cookie' => [
-                    'name' => 'setono_sylius_partner_ads_cookie',
-                    'expire' => 40,
-                ],
+                'attribution_window' => 40,
             ],
         ]);
     }
 
     #[Test]
-    public function it_allows_a_cookie_expiry_of_zero(): void
+    public function it_allows_an_attribution_window_of_one_day(): void
     {
         $this->assertConfigurationIsValid([
-            ['cookie' => ['expire' => 0]],
+            ['attribution_window' => 1],
         ]);
     }
 
     #[Test]
-    public function it_rejects_a_negative_cookie_expiry(): void
+    public function it_rejects_an_attribution_window_of_zero_days(): void
     {
         $this->assertConfigurationIsInvalid([
-            ['cookie' => ['expire' => -1]],
+            ['attribution_window' => 0],
+        ]);
+    }
+
+    #[Test]
+    public function it_rejects_a_negative_attribution_window(): void
+    {
+        $this->assertConfigurationIsInvalid([
+            ['attribution_window' => -1],
+        ]);
+    }
+
+    #[Test]
+    public function it_rejects_the_removed_cookie_node(): void
+    {
+        $this->assertConfigurationIsInvalid([
+            ['cookie' => ['expire' => 40]],
         ]);
     }
 

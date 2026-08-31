@@ -6,7 +6,7 @@
 
 This plugin will track sales made by Partner Ads affiliates.
 
-It works by saving the affiliate partner id in a cookie when the visitor lands on your shop through an affiliate link. When the visitor completes an order, the plugin stores a *conversion* referencing the order and the partner id. A console command - meant to be run periodically via cron - then notifies Partner Ads about conversions whose orders have been **completed** (or, if you prefer, **paid** - see [step 8](#step-8-optional-choose-when-to-notify-partner-ads)), telling them to credit the affiliate partner.
+It works by remembering the affiliate partner id for the visitor when they land on your shop through an affiliate link. Visitors are recognised through [setono/client-bundle](https://github.com/Setono/client-bundle), which gives every visitor a client id (its `setono_client_id` cookie) and lets the plugin keep the partner id in that client's metadata for the length of the attribution window - the plugin sets no cookie of its own. When the visitor completes an order, the plugin stores a *conversion* referencing the order and the partner id. A console command - meant to be run periodically via cron - then notifies Partner Ads about conversions whose orders have been **completed** (or, if you prefer, **paid** - see [step 8](#step-8-optional-choose-when-to-notify-partner-ads)), telling them to credit the affiliate partner.
 
 Because the notification happens out-of-band, a slow or failing Partner Ads endpoint can never affect your customers' checkout, orders that get cancelled before the command runs are never reported, and failed notifications are retried automatically on the next run.
 
@@ -33,13 +33,15 @@ composer require setono/sylius-partner-ads-plugin
 ### Step 2: Enable the plugin
 
 Enable the plugin by adding it to the list of registered plugins/bundles in the `config/bundles.php` file of your
-project, **before** `SyliusGridBundle` (this is required so the plugin's resource is registered before the grid is built):
+project, **before** `SyliusGridBundle` (this is required so the plugin's resource is registered before the grid is built).
+Also register [setono/client-bundle](https://github.com/Setono/client-bundle), which the plugin uses to recognise returning visitors (Symfony Flex may already have done that for you):
 
 ```php
 <?php
 # config/bundles.php
 return [
     // ...
+    Setono\ClientBundle\SetonoClientBundle::class => ['all' => true],
     Setono\SyliusPartnerAdsPlugin\SetonoSyliusPartnerAdsPlugin::class => ['all' => true],
     Sylius\Bundle\GridBundle\SyliusGridBundle::class => ['all' => true],
     // ...
@@ -79,6 +81,8 @@ php bin/console doctrine:migrations:diff
 php bin/console doctrine:migrations:migrate
 ```
 
+This creates the plugin's tables and, unless your application has it already, the client bundle's `setono_client__metadata` table where the partner id is kept per visitor.
+
 ### Step 6: Setup program
 
 Login to your Sylius app admin and go to the Partner Ads page and click "Create" to create a new program. Fill in the program id of your Partner Ads program, make sure "enable" is toggled on, and choose which channel the program should be applied to. Please notice you should only make one program for each channel, or else you will end up with undefined behaviour.
@@ -110,6 +114,21 @@ setono_sylius_partner_ads:
 
 In both modes, conversions for orders that have been cancelled are never sent.
 
+### Step 9 (optional): Adjust the attribution window
+
+An order is credited to a partner when it is completed within the attribution window after the visitor clicked the affiliate link. Partner Ads documents 40 days, which is the default:
+
+```yaml
+setono_sylius_partner_ads:
+    attribution_window: 40 # days
+```
+
+The window cannot outlast the client bundle's own cookie (`setono_client.cookie.expiration`, `+365 days` by default).
+
+## Consent and privacy
+
+The plugin sets no cookie of its own. Visitors are recognised through the client bundle's `setono_client_id` cookie, and the partner id is kept in the `setono_client__metadata` table against that anonymous client id. If your shop needs consent before setting that cookie, listen to the bundle's `PreStoreCookieEvent` and set `$event->store = false` until consent is given - visitors without the cookie are simply never attributed. When a conversion is sent, Partner Ads receives the order number, the order total and the customer's IP address.
+
 ## Design notes
 
 A few decisions in this plugin are deliberate and worth knowing about:
@@ -117,6 +136,7 @@ A few decisions in this plugin are deliberate and worth knowing about:
 - **Nothing that can fail happens during checkout.** The plugin only stores a small conversion row when an order is completed; the HTTP request to Partner Ads happens later in the console command. A slow or failing Partner Ads endpoint can therefore never affect your customers.
 - **There is no unique constraint on the conversion's order.** Two concurrent checkout-complete requests for the same cart (a double click, a browser retry, a payment return racing the customer's return) can both create a conversion for the same order. A unique constraint would stop the duplicate by throwing an exception *inside the checkout*, failing the order for the customer. Instead, duplicates are allowed to exist, and the console command guarantees that Partner Ads is notified at most once per order: once a conversion for an order has been notified, any other conversion for that order is marked as *skipped*.
 - **The console command is locked** so that two overlapping runs cannot both send the same conversion.
+- **The partner id lives in the client metadata, not in a plugin cookie.** Reading it at checkout is a single lazy SELECT by the client bundle, and the plugin never writes metadata during checkout. The storage is a small interface (`PartnerIdStorageInterface`), so it can be replaced if your setup needs something else.
 
 [ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
 [ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license

@@ -4,28 +4,30 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\EventListener;
 
-use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandlerInterface;
 use Setono\SyliusPartnerAdsPlugin\Parser\PartnerIdParser;
+use Setono\SyliusPartnerAdsPlugin\PartnerIdStorage\PartnerIdStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final readonly class SetCookieSubscriber implements EventSubscriberInterface
+/**
+ * Captures the partner id that Partner Ads appends to affiliate links (the "paid" query parameter by default) and
+ * stores it for the visitor, so that an order completed within the attribution window is credited to the partner.
+ */
+final readonly class CapturePartnerIdSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private CookieHandlerInterface $cookieHandler, private string $queryParameter)
+    public function __construct(private PartnerIdStorageInterface $partnerIdStorage, private string $queryParameter)
     {
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::RESPONSE => [
-                'setCookie',
-            ],
+            KernelEvents::REQUEST => ['capture'],
         ];
     }
 
-    public function setCookie(ResponseEvent $event): void
+    public function capture(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -33,7 +35,7 @@ final readonly class SetCookieSubscriber implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        // Only add handle 'real' page loads, not AJAX requests like add to cart
+        // only handle 'real' page loads, not AJAX requests like add to cart
         if ($request->isXmlHttpRequest()) {
             return;
         }
@@ -45,6 +47,7 @@ final readonly class SetCookieSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->cookieHandler->set($event->getResponse(), $partnerId);
+        // last click wins: a previously stored partner id is overwritten and the attribution window restarts
+        $this->partnerIdStorage->store($partnerId);
     }
 }
