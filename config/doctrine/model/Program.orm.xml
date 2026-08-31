@@ -7,10 +7,6 @@
 
     <mapped-superclass name="Setono\SyliusPartnerAdsPlugin\Model\Program" table="setono_sylius_partner_ads__program">
 
-        <indexes>
-            <index columns="enabled" name="idx_enabled"/>
-        </indexes>
-
         <id name="id" type="integer">
             <generator strategy="AUTO"/>
         </id>
@@ -18,7 +14,10 @@
         <field name="programId" type="integer" unique="true" />
         <field name="enabled" column="enabled" type="boolean" />
 
-        <one-to-one field="channel" target-entity="Sylius\Component\Channel\Model\ChannelInterface" />
+        <!-- one program per channel; see also the UniqueEntity constraint in config/validation/Program.xml -->
+        <one-to-one field="channel" target-entity="Sylius\Component\Channel\Model\ChannelInterface">
+            <join-column name="channel_id" nullable="false" unique="true" />
+        </one-to-one>
     </mapped-superclass>
 
 </doctrine-mapping>
