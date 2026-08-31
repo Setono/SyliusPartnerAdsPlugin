@@ -19,6 +19,8 @@ Because the notification happens out-of-band, a slow or failing Partner Ads endp
 | Symfony      | ^6.4 \|\| ^7.4 |
 
 > For Sylius 1.10 use the [`2.x`](https://github.com/Setono/SyliusPartnerAdsPlugin/tree/2.x) version of this plugin.
+>
+> Upgrading from 2.x? Read [UPGRADE.md](UPGRADE.md) - several steps are required.
 
 ## Installation
 
@@ -53,17 +55,22 @@ setono_sylius_partner_ads:
 ```
 
 ### Step 4: HTTP client
-If you already use a PSR-18 HTTP client you need to inject that service:
-```yaml
-setono_sylius_partner_ads:
-    http_client: '@http_client_service_id'
-```
 
-If not, you can just install the Buzz library and it will automatically register the Buzz client as the HTTP client:
+The plugin sends its notifications through a [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP client and ships none of its own. By default it uses `psr18.http_client`, the adapter Symfony registers automatically when [`symfony/http-client`](https://symfony.com/doc/current/http_client.html#psr-18-and-psr-17) is installed - which Sylius already requires. The adapter (like the plugin itself) needs a PSR-17 factory, so make sure one is installed:
 
 ```bash
-composer require kriswallsmith/buzz
+composer require nyholm/psr7
 ```
+
+To use another PSR-18 client, point the plugin at its service id (with or without a leading `@`):
+
+```yaml
+# config/packages/setono_sylius_partner_ads.yaml
+setono_sylius_partner_ads:
+    http_client: my_psr18_client
+```
+
+Timeouts are the client's concern - Symfony's HTTP client has sensible defaults, and you can tune them through its own configuration.
 
 ### Step 5: Update your database schema
 
@@ -87,6 +94,8 @@ Conversions are sent to Partner Ads by a console command that picks up conversio
 If a notification fails (e.g. Partner Ads is down), the conversion stays pending and is retried on subsequent runs. After 10 unsuccessful tries (configurable with `--max-tries`) the conversion is marked as failed, and the last error is saved on the conversion for debugging.
 
 The command takes a lock while it runs, so overlapping runs (e.g. a slow run and the next cron tick) cannot notify Partner Ads twice about the same order. It uses your application's default lock store - if you run cron on more than one server, configure a shared store (e.g. Redis or your database) as described in the [Symfony lock documentation](https://symfony.com/doc/current/lock.html).
+
+The customer IP sent to Partner Ads is the one Sylius stores on the order (`customerIp`), which Sylius takes from `Request::getClientIp()` when the order is completed. If your shop runs behind a reverse proxy or load balancer, make sure [Symfony's trusted proxies](https://symfony.com/doc/current/deployment/proxies.html) are configured - otherwise Partner Ads receives the proxy's IP instead of the customer's.
 
 ### Step 8 (optional): Choose when to notify Partner Ads
 

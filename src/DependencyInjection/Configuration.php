@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
-use Buzz\Client\BuzzClientInterface;
 use Setono\SyliusPartnerAdsPlugin\Doctrine\ORM\ConversionRepository;
 use Setono\SyliusPartnerAdsPlugin\Doctrine\ORM\ProgramRepository;
 use Setono\SyliusPartnerAdsPlugin\Enum\NotifyWhen;
@@ -14,7 +13,6 @@ use Setono\SyliusPartnerAdsPlugin\Model\Program;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;
-use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -29,7 +27,11 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
-                ->append($this->addHttpClientNode())
+                ->scalarNode('http_client')
+                    ->cannotBeEmpty()
+                    ->defaultValue('psr18.http_client')
+                    ->info('The service id of the PSR-18 HTTP client used to notify Partner Ads. The default is the client Symfony registers when symfony/http-client is installed')
+                ->end()
                 ->scalarNode('driver')->defaultValue(SyliusResourceBundle::DRIVER_DOCTRINE_ORM)->cannotBeEmpty()->end()
                 ->arrayNode('resources')
                     ->addDefaultsIfNotSet()
@@ -108,24 +110,5 @@ final class Configuration implements ConfigurationInterface
         ;
 
         return $treeBuilder;
-    }
-
-    private function addHttpClientNode(): ScalarNodeDefinition
-    {
-        $treeBuilder = new TreeBuilder('http_client', 'scalar');
-
-        $node = $treeBuilder->getRootNode();
-        $node
-            ->cannotBeEmpty()
-            ->info('The service id for your PSR18 HTTP client')
-        ;
-
-        if (interface_exists(BuzzClientInterface::class)) {
-            $node->defaultNull();
-        } else {
-            $node->isRequired();
-        }
-
-        return $node;
     }
 }
