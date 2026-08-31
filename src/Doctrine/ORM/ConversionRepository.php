@@ -31,24 +31,25 @@ class ConversionRepository extends EntityRepository implements ConversionReposit
 
     public function findPending(int $limit, NotifyWhen $notifyWhen): array
     {
+        // an order must always have been completed to be eligible - 'paid' is an extra requirement on top of that
         $qb = $this->createQueryBuilder('o')
             ->join('o.order', 'ord')
             ->andWhere('o.state = :state')
+            ->andWhere('ord.checkoutState = :checkoutState')
             ->andWhere('ord.state != :cancelledOrderState')
             ->setParameter('state', ConversionInterface::STATE_PENDING)
+            ->setParameter('checkoutState', OrderCheckoutStates::STATE_COMPLETED)
             ->setParameter('cancelledOrderState', OrderInterface::STATE_CANCELLED)
             ->orderBy('o.id', 'ASC')
             ->setMaxResults($limit)
         ;
 
-        match ($notifyWhen) {
-            NotifyWhen::Completed => $qb
-                ->andWhere('ord.checkoutState = :checkoutState')
-                ->setParameter('checkoutState', OrderCheckoutStates::STATE_COMPLETED),
-            NotifyWhen::Paid => $qb
+        if (NotifyWhen::Paid === $notifyWhen) {
+            $qb
                 ->andWhere('ord.paymentState = :paymentState')
-                ->setParameter('paymentState', OrderPaymentStates::STATE_PAID),
-        };
+                ->setParameter('paymentState', OrderPaymentStates::STATE_PAID)
+            ;
+        }
 
         $objs = $qb->getQuery()->getResult();
 

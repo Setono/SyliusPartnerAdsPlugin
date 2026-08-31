@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Tests\Unit\Command;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -40,8 +41,11 @@ final class ProcessConversionsCommandTest extends TestCase
     /** @var ObjectProphecy<OrderTotalCalculatorInterface> */
     private ObjectProphecy $orderTotalCalculator;
 
-    /** @var ObjectProphecy<ObjectManager> */
-    private ObjectProphecy $conversionManager;
+    /** @var ObjectProphecy<ManagerRegistry> */
+    private ObjectProphecy $managerRegistry;
+
+    /** @var ObjectProphecy<EntityManagerInterface> */
+    private ObjectProphecy $entityManager;
 
     protected function setUp(): void
     {
@@ -49,7 +53,9 @@ final class ProcessConversionsCommandTest extends TestCase
         $this->programRepository = $this->prophesize(ProgramRepositoryInterface::class);
         $this->client = $this->prophesize(ClientInterface::class);
         $this->orderTotalCalculator = $this->prophesize(OrderTotalCalculatorInterface::class);
-        $this->conversionManager = $this->prophesize(ObjectManager::class);
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->managerRegistry = $this->prophesize(ManagerRegistry::class);
+        $this->managerRegistry->getManagerForClass(Conversion::class)->willReturn($this->entityManager->reveal());
     }
 
     #[Test]
@@ -88,7 +94,7 @@ final class ProcessConversionsCommandTest extends TestCase
             ->shouldBeCalled()
         ;
 
-        $this->conversionManager->flush()->shouldBeCalled();
+        $this->entityManager->flush()->shouldBeCalled();
 
         $commandTester = $this->getCommandTester();
         $exitCode = $commandTester->execute([]);
@@ -111,7 +117,7 @@ final class ProcessConversionsCommandTest extends TestCase
             ->willThrow(new \RuntimeException('Something went wrong'))
         ;
 
-        $this->conversionManager->flush()->shouldBeCalled();
+        $this->entityManager->flush()->shouldBeCalled();
 
         $commandTester = $this->getCommandTester();
         $exitCode = $commandTester->execute([]);
@@ -134,7 +140,7 @@ final class ProcessConversionsCommandTest extends TestCase
             ->willThrow(new \RuntimeException('Something went wrong'))
         ;
 
-        $this->conversionManager->flush()->shouldBeCalled();
+        $this->entityManager->flush()->shouldBeCalled();
 
         $commandTester = $this->getCommandTester();
         $exitCode = $commandTester->execute(['--max-tries' => '1']);
@@ -174,7 +180,7 @@ final class ProcessConversionsCommandTest extends TestCase
             $this->programRepository->reveal(),
             $this->client->reveal(),
             $this->orderTotalCalculator->reveal(),
-            $this->conversionManager->reveal(),
+            $this->managerRegistry->reveal(),
             $notifyWhen,
         ));
     }

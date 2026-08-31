@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Command;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Setono\Doctrine\ORMTrait;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculatorInterface;
 use Setono\SyliusPartnerAdsPlugin\Client\ClientInterface;
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
@@ -24,14 +25,18 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class ProcessConversionsCommand extends Command
 {
+    use ORMTrait;
+
     public function __construct(
         private readonly ConversionRepositoryInterface $conversionRepository,
         private readonly ProgramRepositoryInterface $programRepository,
         private readonly ClientInterface $client,
         private readonly OrderTotalCalculatorInterface $orderTotalCalculator,
-        private readonly ObjectManager $conversionManager,
+        ManagerRegistry $managerRegistry,
         private readonly NotifyWhen $notifyWhen,
     ) {
+        $this->managerRegistry = $managerRegistry;
+
         parent::__construct();
     }
 
@@ -83,7 +88,7 @@ final class ProcessConversionsCommand extends Command
                 $io->error(sprintf('Conversion %d failed: %s', (int) $conversion->getId(), $e->getMessage()));
             }
 
-            $this->conversionManager->flush();
+            $this->getManager($conversion)->flush();
         }
 
         $io->success(sprintf('Processed %d conversion(s): %d notified, %d failed', count($conversions), $notified, $failed));

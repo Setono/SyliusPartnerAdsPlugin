@@ -14,7 +14,7 @@ interface ConversionRepositoryInterface extends RepositoryInterface
     public function findOneByOrder(OrderInterface $order): ?ConversionInterface;
 
     /**
-     * Returns pending conversions whose orders are eligible to be sent to Partner Ads according to $notifyWhen.
+     * Returns pending conversions whose orders have been completed and - if $notifyWhen is Paid - also paid.
      * Conversions for cancelled orders are never returned.
      *
      * @return list<ConversionInterface>

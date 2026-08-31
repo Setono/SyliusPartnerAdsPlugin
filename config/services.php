@@ -63,7 +63,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             service('request_stack'),
             service(CookieHandlerInterface::class),
-            // factory and repository services created by AbstractResourceExtension::registerResources()
+            // registered by the resource bundle
             service('setono_sylius_partner_ads.factory.conversion'),
             service('setono_sylius_partner_ads.repository.conversion'),
         ])
@@ -75,8 +75,7 @@ return static function (ContainerConfigurator $container): void {
             service('setono_sylius_partner_ads.repository.program'),
             service(ClientInterface::class),
             service(OrderTotalCalculatorInterface::class),
-            // manager service created by AbstractResourceExtension::registerResources()
-            service('setono_sylius_partner_ads.manager.conversion'),
+            service('doctrine'),
             '%setono_sylius_partner_ads.notify_when%',
         ])
         ->tag('console.command');
