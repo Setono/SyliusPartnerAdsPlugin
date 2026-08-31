@@ -111,6 +111,17 @@ final class ProcessConversionsCommandTest extends TestCase
     }
 
     #[Test]
+    public function it_rejects_a_non_numeric_limit(): void
+    {
+        $this->conversionRepository->findPending(Argument::cetera())->shouldNotBeCalled();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('--limit');
+
+        $this->getCommandTester()->execute(['--limit' => 'lots']);
+    }
+
+    #[Test]
     public function it_rejects_max_tries_below_one(): void
     {
         $this->conversionRepository->findPending(Argument::cetera())->shouldNotBeCalled();

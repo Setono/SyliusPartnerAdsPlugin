@@ -34,9 +34,6 @@ use Webmozart\Assert\Assert;
  */
 final readonly class CreateConversionSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @param FactoryInterface<ConversionInterface> $conversionFactory
-     */
     public function __construct(
         private RequestStack $requestStack,
         private CookieHandlerInterface $cookieHandler,

@@ -71,15 +71,8 @@ final class ProcessConversionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $limit = (int) $input->getOption('limit');
-        if ($limit < 1) {
-            throw new \InvalidArgumentException('The --limit option must be at least 1');
-        }
-
-        $maxTries = (int) $input->getOption('max-tries');
-        if ($maxTries < 1) {
-            throw new \InvalidArgumentException('The --max-tries option must be at least 1');
-        }
+        $limit = self::getPositiveIntegerOption($input, 'limit');
+        $maxTries = self::getPositiveIntegerOption($input, 'max-tries');
 
         // The lock is released explicitly in the finally block below. Auto release (which relies on the
         // destructor of the lock object) is disabled so that the release is deterministic and observable.
@@ -158,6 +151,16 @@ final class ProcessConversionsCommand extends Command
         ));
 
         return $failed > 0 ? Command::FAILURE : Command::SUCCESS;
+    }
+
+    private static function getPositiveIntegerOption(InputInterface $input, string $name): int
+    {
+        $value = filter_var($input->getOption($name), \FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        if (false === $value) {
+            throw new \InvalidArgumentException(sprintf('The --%s option must be an integer of at least 1', $name));
+        }
+
+        return $value;
     }
 
     private function isAlreadyNotified(ConversionInterface $conversion): bool
