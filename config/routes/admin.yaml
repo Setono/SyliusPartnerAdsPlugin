@@ -7,3 +7,13 @@ setono_sylius_partner_ads_admin_program:
         redirect: update
         grid: setono_sylius_partner_ads_admin_program
     type: sylius.resource
+
+setono_sylius_partner_ads_admin_conversion:
+    resource: |
+        alias: setono_sylius_partner_ads.conversion
+        section: admin
+        permission: true
+        templates: "@SyliusAdmin\\shared\\crud"
+        grid: setono_sylius_partner_ads_admin_conversion
+        only: ['index', 'delete']
+    type: sylius.resource

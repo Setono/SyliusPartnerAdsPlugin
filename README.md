@@ -6,7 +6,9 @@
 
 This plugin will track sales made by Partner Ads affiliates.
 
-It works by saving the affiliate partner id when the visitor visits any page on your shop. Then when the user successfully completes an order it will send a HTTP request to Partner Ads telling them to credit the affiliate partner.
+It works by saving the affiliate partner id in a cookie when the visitor lands on your shop through an affiliate link. When the visitor completes an order, the plugin stores a *conversion* referencing the order and the partner id. A console command - meant to be run periodically via cron - then notifies Partner Ads about conversions whose orders have been **completed** (or, if you prefer, **paid** - see [step 8](#step-8-optional-choose-when-to-notify-partner-ads)), telling them to credit the affiliate partner.
+
+Because the notification happens out-of-band, a slow or failing Partner Ads endpoint can never affect your customers' checkout, orders that get cancelled before the command runs are never reported, and failed notifications are retried automatically on the next run.
 
 ## Requirements
 
@@ -74,36 +76,38 @@ php bin/console doctrine:migrations:migrate
 
 Login to your Sylius app admin and go to the Partner Ads page and click "Create" to create a new program. Fill in the program id of your Partner Ads program, make sure "enable" is toggled on, and choose which channel the program should be applied to. Please notice you should only make one program for each channel, or else you will end up with undefined behaviour.
 
-### Step 7 (optional, but recommended): Configure Async HTTP requests
-This plugin will make a HTTP request to Partner Ads when a customer completes an order. This will make the 'Thank you' page load slower. To circumvent that you can use a transport (e.g. RabbitMQ) with Symfony Messenger to send this HTTP request asynchronously.
+### Step 7: Schedule the process command
 
-Follow the installation instructions here: [How to Use the Messenger](https://symfony.com/doc/current/messenger.html) and then [configure a transport](https://symfony.com/doc/current/messenger.html#transports).
+Conversions are sent to Partner Ads by a console command that picks up conversions whose orders have been completed (or paid, see step 8). Schedule it via cron (every 5-15 minutes is fine - Partner Ads does not need real-time notifications):
 
-Then configure the Messenger component:
-```yaml
-# config/packages/messenger.yaml
-framework:
-    messenger:
-        transports:
-            amqp: "%env(MESSENGER_TRANSPORT_DSN)%"
+```
+*/10 * * * * php /path/to/your/app/bin/console setono:sylius-partner-ads:process-conversions
 ```
 
-```yaml
-# .env
-###> symfony/messenger ###
-MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
-###< symfony/messenger ###
-```
+If a notification fails (e.g. Partner Ads is down), the conversion stays pending and is retried on subsequent runs. After 10 unsuccessful tries (configurable with `--max-tries`) the conversion is marked as failed, and the last error is saved on the conversion for debugging.
 
-And finally configure the plugin to use your transport:
+The command takes a lock while it runs, so overlapping runs (e.g. a slow run and the next cron tick) cannot notify Partner Ads twice about the same order. It uses your application's default lock store - if you run cron on more than one server, configure a shared store (e.g. Redis or your database) as described in the [Symfony lock documentation](https://symfony.com/doc/current/lock.html).
+
+### Step 8 (optional): Choose when to notify Partner Ads
+
+By default, Partner Ads is notified as soon as the customer has completed the checkout, i.e. when the order is placed. This is how affiliate networks usually work: the sale is tracked right away, and if the order is never paid you cancel the sale in the Partner Ads panel.
+
+If you would rather only report orders that have actually been paid, configure:
 
 ```yaml
 setono_sylius_partner_ads:
-    messenger:
-        transport: amqp
+    notify_when: paid # defaults to 'completed'
 ```
 
-After this the Messenger will be automatically enabled in this plugin and subsequently it will send an asynchronous request to Partner Ads instead of a synchronous.
+In both modes, conversions for orders that have been cancelled are never sent.
+
+## Design notes
+
+A few decisions in this plugin are deliberate and worth knowing about:
+
+- **Nothing that can fail happens during checkout.** The plugin only stores a small conversion row when an order is completed; the HTTP request to Partner Ads happens later in the console command. A slow or failing Partner Ads endpoint can therefore never affect your customers.
+- **There is no unique constraint on the conversion's order.** Two concurrent checkout-complete requests for the same cart (a double click, a browser retry, a payment return racing the customer's return) can both create a conversion for the same order. A unique constraint would stop the duplicate by throwing an exception *inside the checkout*, failing the order for the customer. Instead, duplicates are allowed to exist, and the console command guarantees that Partner Ads is notified at most once per order: once a conversion for an order has been notified, any other conversion for that order is marked as *skipped*.
+- **The console command is locked** so that two overlapping runs cannot both send the same conversion.
 
 [ico-version]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/v/stable
 [ico-license]: https://poser.pugx.org/setono/sylius-partner-ads-plugin/license

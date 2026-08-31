@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin;
 
-use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterCommandBusPass;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler\RegisterHttpClientPass;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
 use Sylius\Bundle\ResourceBundle\AbstractResourceBundle;
@@ -19,7 +18,6 @@ final class SetonoSyliusPartnerAdsPlugin extends AbstractResourceBundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new RegisterCommandBusPass());
         $container->addCompilerPass(new RegisterHttpClientPass());
     }
 

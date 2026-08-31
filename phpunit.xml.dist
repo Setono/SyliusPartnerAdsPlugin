@@ -11,9 +11,14 @@
         </testsuite>
     </testsuites>
     <php>
-        <env name="APP_ENV" value="test"/>
+        <!-- force: tools such as the Symfony CLI set APP_ENV themselves, and the tests must always run in test -->
+        <server name="APP_ENV" value="test" force="true"/>
         <env name="SHELL_VERBOSITY" value="-1"/>
     </php>
+    <extensions>
+        <!-- wraps every test in a database transaction that is rolled back afterwards -->
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+    </extensions>
     <source>
         <include>
             <directory suffix=".php">src/</directory>

@@ -8,7 +8,8 @@ use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculator;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\SetonoSyliusPartnerAdsExtension;
-use Setono\SyliusPartnerAdsPlugin\Message\Command\Notify;
+use Setono\SyliusPartnerAdsPlugin\Enum\NotifyWhen;
+use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCase
@@ -28,18 +29,18 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.query_parameter', 'paid');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.cookie.name', 'setono_sylius_partner_ads_cookie');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.cookie.expire', 40);
-        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.messenger.command_bus', 'sylius.command_bus');
-        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.messenger.transport');
+        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.notify_when', NotifyWhen::Completed);
 
         // proves registerResources() ran
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.model.program.class');
+        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.model.conversion.class');
 
         // proves services.php was loaded
         $this->assertContainerBuilderHasService(OrderTotalCalculator::class);
     }
 
     #[Test]
-    public function it_prepends_the_admin_program_grid(): void
+    public function it_prepends_the_admin_grids(): void
     {
         $container = new ContainerBuilder();
         (new SetonoSyliusPartnerAdsExtension())->prepend($container);
@@ -73,33 +74,70 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
                         ],
                     ],
                 ],
-            ],
-        ]], $container->getExtensionConfig('sylius_grid'));
-    }
-
-    #[Test]
-    public function it_does_not_prepend_messenger_routing_when_no_transport_is_configured(): void
-    {
-        $container = new ContainerBuilder();
-        (new SetonoSyliusPartnerAdsExtension())->prepend($container);
-
-        self::assertSame([], $container->getExtensionConfig('framework'));
-    }
-
-    #[Test]
-    public function it_prepends_messenger_routing_when_a_transport_is_configured(): void
-    {
-        $container = new ContainerBuilder();
-        $container->prependExtensionConfig('setono_sylius_partner_ads', ['messenger' => ['transport' => 'amqp']]);
-
-        (new SetonoSyliusPartnerAdsExtension())->prepend($container);
-
-        self::assertSame([[
-            'messenger' => [
-                'routing' => [
-                    Notify::class => 'amqp',
+                'setono_sylius_partner_ads_admin_conversion' => [
+                    'driver' => [
+                        'name' => 'doctrine/orm',
+                        'options' => [
+                            'class' => '%setono_sylius_partner_ads.model.conversion.class%',
+                        ],
+                    ],
+                    'sorting' => [
+                        'createdAt' => 'desc',
+                    ],
+                    'fields' => [
+                        'order' => [
+                            'type' => 'string',
+                            'path' => 'order.number',
+                            'label' => 'setono_sylius_partner_ads.ui.order',
+                        ],
+                        'partnerId' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.partner_id',
+                        ],
+                        'state' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.state',
+                        ],
+                        'tries' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.tries',
+                        ],
+                        'lastError' => [
+                            'type' => 'string',
+                            'label' => 'setono_sylius_partner_ads.ui.last_error',
+                        ],
+                        'notifiedAt' => [
+                            'type' => 'datetime',
+                            'label' => 'setono_sylius_partner_ads.ui.notified_at',
+                            'sortable' => true,
+                        ],
+                        'createdAt' => [
+                            'type' => 'datetime',
+                            'label' => 'setono_sylius_partner_ads.ui.created_at',
+                            'sortable' => true,
+                        ],
+                    ],
+                    'filters' => [
+                        'state' => [
+                            'type' => 'select',
+                            'label' => 'setono_sylius_partner_ads.ui.state',
+                            'form_options' => [
+                                'choices' => [
+                                    'setono_sylius_partner_ads.ui.state_pending' => ConversionInterface::STATE_PENDING,
+                                    'setono_sylius_partner_ads.ui.state_notified' => ConversionInterface::STATE_NOTIFIED,
+                                    'setono_sylius_partner_ads.ui.state_failed' => ConversionInterface::STATE_FAILED,
+                                    'setono_sylius_partner_ads.ui.state_skipped' => ConversionInterface::STATE_SKIPPED,
+                                ],
+                            ],
+                        ],
+                    ],
+                    'actions' => [
+                        'item' => [
+                            'delete' => ['type' => 'delete'],
+                        ],
+                    ],
                 ],
             ],
-        ]], $container->getExtensionConfig('framework'));
+        ]], $container->getExtensionConfig('sylius_grid'));
     }
 }

@@ -12,3 +12,15 @@ setono_sylius_partner_ads:
         enabled: Aktiveret
         partner_ads: Partner Ads
         program: Program
+        conversions: Partner Ads-konverteringer
+        order: Ordre
+        partner_id: Partner-id
+        state: Status
+        state_pending: Afventer
+        state_notified: Notificeret
+        state_failed: Fejlet
+        state_skipped: Sprunget over
+        tries: Forsøg
+        last_error: Seneste fejl
+        notified_at: Notificeret den
+        created_at: Oprettet den

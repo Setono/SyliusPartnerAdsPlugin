@@ -45,3 +45,9 @@ when@prod:
                     adapter: cache.app
                 doctrine.system_cache_pool:
                     adapter: cache.system
+
+when@test:
+    doctrine:
+        dbal:
+            # required by the DAMA Doctrine test bundle, which wraps every test in a transaction
+            use_savepoints: true

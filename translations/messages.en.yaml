@@ -12,3 +12,15 @@ setono_sylius_partner_ads:
         enabled: Enabled
         partner_ads: Partner Ads
         program: Program
+        conversions: Partner Ads Conversions
+        order: Order
+        partner_id: Partner id
+        state: State
+        state_pending: Pending
+        state_notified: Notified
+        state_failed: Failed
+        state_skipped: Skipped
+        tries: Tries
+        last_error: Last error
+        notified_at: Notified at
+        created_at: Created at

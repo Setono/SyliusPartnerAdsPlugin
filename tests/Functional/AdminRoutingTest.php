@@ -43,4 +43,24 @@ final class AdminRoutingTest extends KernelTestCase
         self::assertNotNull($routes->get('setono_sylius_partner_ads_admin_program_create'));
         self::assertNotNull($routes->get('setono_sylius_partner_ads_admin_program_update'));
     }
+
+    #[Test]
+    public function the_admin_conversion_routes_are_registered(): void
+    {
+        self::bootKernel();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get('router');
+        $routes = $router->getRouteCollection();
+
+        self::assertNotNull(
+            $routes->get('setono_sylius_partner_ads_admin_conversion_index'),
+            'The admin conversion index route should be registered through the sylius.resource routing.',
+        );
+        self::assertNotNull($routes->get('setono_sylius_partner_ads_admin_conversion_delete'));
+
+        // conversions are created by the system, so they must not be creatable or editable in the admin
+        self::assertNull($routes->get('setono_sylius_partner_ads_admin_conversion_create'));
+        self::assertNull($routes->get('setono_sylius_partner_ads_admin_conversion_update'));
+    }
 }

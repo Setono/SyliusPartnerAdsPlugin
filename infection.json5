@@ -16,6 +16,13 @@
             "ignore": [
                 "Setono\\SyliusPartnerAdsPlugin\\Calculator\\OrderTotalCalculator::get"
             ]
+        },
+        // The lock is released explicitly in a finally block, and Lock::release() marks the lock as clean, so
+        // enabling auto release (a destructor-based release of dirty locks) changes nothing: the mutant is equivalent.
+        "FalseValue": {
+            "ignore": [
+                "Setono\\SyliusPartnerAdsPlugin\\Command\\ProcessConversionsCommand::execute"
+            ]
         }
     },
     "logs": {
