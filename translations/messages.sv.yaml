@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Redigera program
+        new_program: Nytt program
+        programs: Partner Ads-program
+        manage_programs: Hantera dina Partner Ads-program
+        program_index: Programöversikt
+        program_id: Program-id
+        program_id_placeholder: Ange ditt program-id, t.ex. 392871
+        channel: Kanal
+        select_channel: Välj kanal...
+        enabled: Aktiverad
+        partner_ads: Partner Ads
+        program: Program
+        conversions: Partner Ads-konverteringar
+        order: Order
+        partner_id: Partner-id
+        state: Status
+        state_pending: Väntar
+        state_notified: Meddelad
+        state_failed: Misslyckad
+        state_skipped: Överhoppad
+        tries: Försök
+        last_error: Senaste fel
+        notified_at: Meddelad den
+        created_at: Skapad den

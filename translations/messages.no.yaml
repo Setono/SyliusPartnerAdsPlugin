@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Rediger program
+        new_program: Nytt program
+        programs: Partner Ads-programmer
+        manage_programs: Administrer dine Partner Ads-programmer
+        program_index: Programoversikt
+        program_id: Program-ID
+        program_id_placeholder: Skriv inn program-ID-en din, f.eks. 392871
+        channel: Kanal
+        select_channel: Velg kanal...
+        enabled: Aktivert
+        partner_ads: Partner Ads
+        program: Program
+        conversions: Partner Ads-konverteringer
+        order: Ordre
+        partner_id: Partner-ID
+        state: Status
+        state_pending: Venter
+        state_notified: Varslet
+        state_failed: Mislyktes
+        state_skipped: Hoppet over
+        tries: Forsøk
+        last_error: Siste feil
+        notified_at: Varslet den
+        created_at: Opprettet den

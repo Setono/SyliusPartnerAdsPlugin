@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Program szerkesztése
+        new_program: Új program
+        programs: Partner Ads programok
+        manage_programs: Partner Ads programjainak kezelése
+        program_index: Programlista
+        program_id: Programazonosító
+        program_id_placeholder: Adja meg a programazonosítóját, pl. 392871
+        channel: Csatorna
+        select_channel: Válasszon csatornát...
+        enabled: Engedélyezve
+        partner_ads: Partner Ads
+        program: Program
+        conversions: Partner Ads konverziók
+        order: Rendelés
+        partner_id: Partnerazonosító
+        state: Állapot
+        state_pending: Függőben
+        state_notified: Értesítve
+        state_failed: Sikertelen
+        state_skipped: Kihagyva
+        tries: Próbálkozások
+        last_error: Utolsó hiba
+        notified_at: Értesítés ideje
+        created_at: Létrehozás ideje

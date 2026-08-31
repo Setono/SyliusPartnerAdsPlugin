@@ -1,0 +1,9 @@
+setono_sylius_partner_ads:
+    program:
+        program_id:
+            unique: El ID del programa ya se utiliza en otro programa.
+            not_blank: El ID del programa no puede estar vacío.
+            greater_than: El ID del programa debe ser mayor que {{ compared_value }}.
+        channel:
+            not_null: Debes seleccionar un canal
+            unique: Ya existe un programa para este canal. Edita ese programa en su lugar.

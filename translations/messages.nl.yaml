@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Programma bewerken
+        new_program: Nieuw programma
+        programs: "Partner Ads-programma's"
+        manage_programs: "Beheer je Partner Ads-programma's"
+        program_index: Programmaoverzicht
+        program_id: Programma-id
+        program_id_placeholder: Voer je programma-id in, bijv. 392871
+        channel: Kanaal
+        select_channel: Selecteer kanaal...
+        enabled: Ingeschakeld
+        partner_ads: Partner Ads
+        program: Programma
+        conversions: Partner Ads-conversies
+        order: Bestelling
+        partner_id: Partner-id
+        state: Status
+        state_pending: In afwachting
+        state_notified: Gemeld
+        state_failed: Mislukt
+        state_skipped: Overgeslagen
+        tries: Pogingen
+        last_error: Laatste fout
+        notified_at: Gemeld op
+        created_at: Aangemaakt op
