@@ -98,7 +98,6 @@ final class TranslationCataloguesTest extends TestCase
         foreach ($values as $key => $value) {
             $path = '' === $prefix ? (string) $key : sprintf('%s.%s', $prefix, $key);
             if (is_array($value)) {
-                /** @var array<array-key, mixed> $value */
                 $flat += self::flatten($value, $path);
             } else {
                 $flat[$path] = $value;
