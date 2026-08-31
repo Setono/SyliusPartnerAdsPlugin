@@ -65,11 +65,8 @@ final readonly class CreateConversionSubscriber implements EventSubscriberInterf
             return;
         }
 
-        // a tampered or mangled cookie casts to a non-positive integer - do not attribute the order in that case
+        // has() is only true for a valid partner id, so a tampered or mangled cookie never attributes the order
         $partnerId = $this->cookieHandler->get($request);
-        if ($partnerId <= 0) {
-            return;
-        }
 
         // best effort only: this prevents duplicates when the event is dispatched more than once sequentially,
         // but cannot see a concurrent request's uncommitted insert (see the class docblock)

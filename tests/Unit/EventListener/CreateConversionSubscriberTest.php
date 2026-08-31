@@ -116,19 +116,6 @@ final class CreateConversionSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_does_nothing_when_the_cookie_does_not_hold_a_valid_partner_id(): void
-    {
-        $order = $this->prophesize(OrderInterface::class);
-
-        $this->cookieHandler->has($this->request)->willReturn(true);
-        $this->cookieHandler->get($this->request)->willReturn(0);
-
-        $this->conversionRepository->add(Argument::any())->shouldNotBeCalled();
-
-        $this->getSubscriber()->createConversion(new GenericEvent($order->reveal()));
-    }
-
-    #[Test]
     public function it_does_nothing_when_the_order_already_has_a_conversion(): void
     {
         $order = $this->prophesize(OrderInterface::class);

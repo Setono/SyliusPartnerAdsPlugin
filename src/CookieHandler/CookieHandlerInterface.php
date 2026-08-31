@@ -20,12 +20,14 @@ interface CookieHandlerInterface
     public function remove(Response $response): void;
 
     /**
-     * Returns the cookie value which is a Partner Ads partner id
+     * Returns the Partner Ads partner id held by the cookie. Callers must check has() first: this method throws
+     * if the cookie is missing or does not hold a valid partner id.
      */
     public function get(Request $request): int;
 
     /**
-     * Returns true if the request has the cookie set
+     * Returns true if the request has the cookie and it holds a valid (positive integer) partner id.
+     * A missing, empty, or tampered cookie is treated as absent.
      */
     public function has(Request $request): bool;
 }

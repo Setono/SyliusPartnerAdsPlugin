@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Tests\Unit\EventListener;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -69,6 +70,34 @@ final class SetCookieSubscriberTest extends TestCase
         $cookieHandler->set(Argument::cetera())->shouldNotBeCalled();
 
         $this->createSubscriber($cookieHandler->reveal())->setCookie($event);
+    }
+
+    #[Test]
+    #[DataProvider('invalidPartnerIds')]
+    public function it_does_not_set_the_cookie_when_the_query_parameter_is_not_a_valid_partner_id(mixed $value): void
+    {
+        $cookieHandler = $this->prophesize(CookieHandlerInterface::class);
+
+        $request = new Request([self::PARAM => $value]);
+        $event = $this->createEvent($request, HttpKernelInterface::MAIN_REQUEST);
+
+        $cookieHandler->set(Argument::cetera())->shouldNotBeCalled();
+
+        // must not throw either - a malformed affiliate link must never break a shop page
+        $this->createSubscriber($cookieHandler->reveal())->setCookie($event);
+    }
+
+    /**
+     * @return iterable<string, array{mixed}>
+     */
+    public static function invalidPartnerIds(): iterable
+    {
+        yield 'empty' => [''];
+        yield 'garbage' => ['junk'];
+        yield 'zero' => ['0'];
+        yield 'negative' => ['-5'];
+        yield 'decimal' => ['1.5'];
+        yield 'array' => [['1']];
     }
 
     #[Test]
