@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Editează programul
+        new_program: Program nou
+        programs: Programe Partner Ads
+        manage_programs: Gestionează programele tale Partner Ads
+        program_index: Lista programelor
+        program_id: ID-ul programului
+        program_id_placeholder: Introdu ID-ul programului tău, de ex. 392871
+        channel: Canal
+        select_channel: Selectează un canal...
+        enabled: Activat
+        partner_ads: Partner Ads
+        program: Program
+        conversions: Conversii Partner Ads
+        order: Comandă
+        partner_id: ID-ul partenerului
+        state: Stare
+        state_pending: În așteptare
+        state_notified: Notificată
+        state_failed: Eșuată
+        state_skipped: Omisă
+        tries: Încercări
+        last_error: Ultima eroare
+        notified_at: Notificată la
+        created_at: Creată la

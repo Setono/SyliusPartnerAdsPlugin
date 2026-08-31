@@ -1,0 +1,9 @@
+setono_sylius_partner_ads:
+    program:
+        program_id:
+            unique: A programazonosító már használatban van egy másik programban.
+            not_blank: A programazonosító nem lehet üres.
+            greater_than: A programazonosítónak nagyobbnak kell lennie, mint {{ compared_value }}.
+        channel:
+            not_null: Csatornát kell választania
+            unique: Ehhez a csatornához már létezik program. Szerkessze inkább azt a programot.

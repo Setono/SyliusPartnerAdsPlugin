@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Programm bearbeiten
+        new_program: Neues Programm
+        programs: Partner Ads-Programme
+        manage_programs: Verwalten Sie Ihre Partner Ads-Programme
+        program_index: Programmübersicht
+        program_id: Programm-ID
+        program_id_placeholder: Geben Sie Ihre Programm-ID ein, z. B. 392871
+        channel: Kanal
+        select_channel: Kanal auswählen...
+        enabled: Aktiviert
+        partner_ads: Partner Ads
+        program: Programm
+        conversions: Partner Ads-Conversions
+        order: Bestellung
+        partner_id: Partner-ID
+        state: Status
+        state_pending: Ausstehend
+        state_notified: Gemeldet
+        state_failed: Fehlgeschlagen
+        state_skipped: Übersprungen
+        tries: Versuche
+        last_error: Letzter Fehler
+        notified_at: Gemeldet am
+        created_at: Erstellt am

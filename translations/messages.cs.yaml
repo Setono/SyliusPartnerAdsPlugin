@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Upravit program
+        new_program: Nový program
+        programs: Programy Partner Ads
+        manage_programs: Spravujte své programy Partner Ads
+        program_index: Seznam programů
+        program_id: ID programu
+        program_id_placeholder: Zadejte ID svého programu, např. 392871
+        channel: Kanál
+        select_channel: Vyberte kanál...
+        enabled: Povoleno
+        partner_ads: Partner Ads
+        program: Program
+        conversions: Konverze Partner Ads
+        order: Objednávka
+        partner_id: ID partnera
+        state: Stav
+        state_pending: Čekající
+        state_notified: Oznámená
+        state_failed: Neúspěšná
+        state_skipped: Přeskočená
+        tries: Pokusy
+        last_error: Poslední chyba
+        notified_at: Oznámeno dne
+        created_at: Vytvořeno dne

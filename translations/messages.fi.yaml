@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Muokkaa ohjelmaa
+        new_program: Uusi ohjelma
+        programs: Partner Ads -ohjelmat
+        manage_programs: Hallitse Partner Ads -ohjelmiasi
+        program_index: Ohjelmaluettelo
+        program_id: Ohjelman tunnus
+        program_id_placeholder: Syötä ohjelmasi tunnus, esim. 392871
+        channel: Kanava
+        select_channel: Valitse kanava...
+        enabled: Käytössä
+        partner_ads: Partner Ads
+        program: Ohjelma
+        conversions: Partner Ads -konversiot
+        order: Tilaus
+        partner_id: Kumppanin tunnus
+        state: Tila
+        state_pending: Odottaa
+        state_notified: Ilmoitettu
+        state_failed: Epäonnistui
+        state_skipped: Ohitettu
+        tries: Yritykset
+        last_error: Viimeisin virhe
+        notified_at: Ilmoitettu
+        created_at: Luotu

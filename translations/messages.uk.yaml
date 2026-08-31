@@ -1,0 +1,26 @@
+setono_sylius_partner_ads:
+    ui:
+        edit_program: Редагувати програму
+        new_program: Нова програма
+        programs: Програми Partner Ads
+        manage_programs: Керуйте своїми програмами Partner Ads
+        program_index: Список програм
+        program_id: ID програми
+        program_id_placeholder: Введіть ID вашої програми, напр. 392871
+        channel: Канал
+        select_channel: Виберіть канал...
+        enabled: Увімкнено
+        partner_ads: Partner Ads
+        program: Програма
+        conversions: Конверсії Partner Ads
+        order: Замовлення
+        partner_id: ID партнера
+        state: Стан
+        state_pending: Очікує
+        state_notified: Сповіщено
+        state_failed: Невдала
+        state_skipped: Пропущено
+        tries: Спроби
+        last_error: Остання помилка
+        notified_at: Сповіщено
+        created_at: Створено

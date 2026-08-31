@@ -1,0 +1,9 @@
+setono_sylius_partner_ads:
+    program:
+        program_id:
+            unique: Ohjelman tunnus on jo käytössä toisessa ohjelmassa.
+            not_blank: Ohjelman tunnus ei voi olla tyhjä.
+            greater_than: Ohjelman tunnuksen on oltava suurempi kuin {{ compared_value }}.
+        channel:
+            not_null: Sinun on valittava kanava
+            unique: Tälle kanavalle on jo olemassa ohjelma. Muokkaa sen sijaan sitä ohjelmaa.
