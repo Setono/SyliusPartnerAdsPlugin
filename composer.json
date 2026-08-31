@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=8.2",
+        "ext-filter": "*",
         "doctrine/persistence": "^3.1 || ^4.0",
         "knplabs/knp-menu": "^3.1",
         "php-http/discovery": "^1.20",
