@@ -37,6 +37,10 @@ final class RegisterHttpClientPass implements CompilerPassInterface
             ]);
             $container->setDefinition($httpClientServiceId, $definition);
         } else {
+            // services are referenced with a leading '@' in service definitions, so it is an easy mistake to
+            // make in the plugin configuration as well - accept it instead of failing with a confusing error
+            $httpClientServiceIdParam = ltrim($httpClientServiceIdParam, '@');
+
             if (!$container->has($httpClientServiceIdParam)) {
                 throw new ServiceNotFoundException($httpClientServiceIdParam);
             }

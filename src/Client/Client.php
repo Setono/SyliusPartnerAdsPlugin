@@ -28,8 +28,10 @@ final readonly class Client implements ClientInterface
 
         $response = $this->httpClient->sendRequest($request);
 
-        if ($response->getStatusCode() !== 200) {
-            throw new RequestFailedException($request, $response, $response->getStatusCode());
+        // any 2xx counts as success - Partner Ads answers 200 today, but a 204 must not be treated as a failure
+        $statusCode = $response->getStatusCode();
+        if ($statusCode < 200 || $statusCode >= 300) {
+            throw new RequestFailedException($request, $response, $statusCode);
         }
 
         return (string) $response->getBody();

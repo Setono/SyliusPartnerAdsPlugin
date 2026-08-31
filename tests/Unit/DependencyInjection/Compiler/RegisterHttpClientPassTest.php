@@ -31,6 +31,17 @@ final class RegisterHttpClientPassTest extends AbstractCompilerPassTestCase
     }
 
     #[Test]
+    public function it_accepts_a_service_id_with_a_leading_at_sign(): void
+    {
+        $this->setParameter('setono_sylius_partner_ads.http_client', '@http_client');
+        $this->registerService('http_client', Curl::class);
+
+        $this->compile();
+
+        $this->assertContainerBuilderHasAlias('setono_sylius_partner_ads.http_client', 'http_client');
+    }
+
+    #[Test]
     public function throws_exception_if_http_client_service_does_not_exist(): void
     {
         $this->setParameter('setono_sylius_partner_ads.http_client', 'http_client');
