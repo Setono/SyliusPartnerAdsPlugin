@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Tests\Unit\CookieHandler;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Setono\SyliusPartnerAdsPlugin\CookieHandler\CookieHandler;
@@ -95,6 +96,32 @@ final class CookieHandlerTest extends TestCase
         self::assertFalse($cookieHandler->has($request));
     }
 
+    #[Test]
+    #[DataProvider('invalidCookieValues')]
+    public function it_treats_a_cookie_without_a_valid_partner_id_as_absent(mixed $value): void
+    {
+        $cookieHandler = new CookieHandler($this->name, $this->expire);
+        $request = new Request([], [], [], [$this->name => $value]);
+
+        self::assertFalse($cookieHandler->has($request));
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $cookieHandler->get($request);
+    }
+
+    /**
+     * @return iterable<string, array{mixed}>
+     */
+    public static function invalidCookieValues(): iterable
+    {
+        yield 'empty' => [''];
+        yield 'garbage' => ['junk'];
+        yield 'zero' => ['0'];
+        yield 'negative' => ['-1'];
+        yield 'array' => [['1']];
+    }
+
     private function createCookieHandler(Response $response): CookieHandler
     {
         $cookieHandler = new CookieHandler($this->name, $this->expire);
@@ -106,7 +133,7 @@ final class CookieHandlerTest extends TestCase
     private function createRequest(?string $name = null): Request
     {
         // Cookies arrive as strings over HTTP, so the value is a string here on purpose. This also
-        // verifies the int cast in CookieHandler::get() is actually exercised.
+        // verifies that CookieHandler::get() parses the string into an integer.
         return new Request([], [], [], [
             $name ?? $this->name => (string) $this->partnerId,
         ]);

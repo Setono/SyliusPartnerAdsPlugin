@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\CookieHandler;
 
+use Setono\SyliusPartnerAdsPlugin\Parser\PartnerIdParser;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,17 +29,23 @@ final readonly class CookieHandler implements CookieHandlerInterface
 
     public function get(Request $request): int
     {
-        $value = $request->cookies->get($this->cookieName);
+        $partnerId = $this->parse($request);
 
-        // Fail loudly on misuse: callers must check has() first. Without this guard a missing
-        // cookie would silently be cast to partner id 0 and reported to Partner Ads.
-        Assert::notNull($value, sprintf('No "%s" cookie found on the request', $this->cookieName));
+        // Fail loudly on misuse: callers must check has() first. Without this guard a missing or
+        // tampered cookie would silently become partner id 0 and be reported to Partner Ads.
+        Assert::notNull($partnerId, sprintf('No "%s" cookie holding a valid partner id found on the request', $this->cookieName));
 
-        return (int) $value;
+        return $partnerId;
     }
 
     public function has(Request $request): bool
     {
-        return $request->cookies->has($this->cookieName);
+        return null !== $this->parse($request);
+    }
+
+    private function parse(Request $request): ?int
+    {
+        // all() instead of get(): get() throws when the cookie is an array, see PartnerIdParser
+        return PartnerIdParser::parse($request->cookies->all()[$this->cookieName] ?? null);
     }
 }
