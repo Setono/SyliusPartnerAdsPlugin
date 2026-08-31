@@ -24,7 +24,7 @@ final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCas
     {
         $this->load();
 
-        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.http_client');
+        $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.http_client', 'psr18.http_client');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.urls.notify');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.query_parameter', 'paid');
         $this->assertContainerBuilderHasParameter('setono_sylius_partner_ads.cookie.name', 'setono_sylius_partner_ads_cookie');

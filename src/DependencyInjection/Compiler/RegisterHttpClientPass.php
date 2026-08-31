@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection\Compiler;
 
-use Buzz\Client\BuzzClientInterface;
-use Buzz\Client\Curl;
-use Setono\SyliusPartnerAdsPlugin\Exception\InterfaceNotFoundException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Aliases the plugin's HTTP client to the configured PSR-18 client service. There is deliberately no bundled
+ * fallback client: the application decides which HTTP client (and which timeouts) to use.
+ */
 final class RegisterHttpClientPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
@@ -21,30 +20,20 @@ final class RegisterHttpClientPass implements CompilerPassInterface
             return;
         }
 
-        $httpClientServiceId = 'setono_sylius_partner_ads.http_client';
+        /** @var string $serviceId */
+        $serviceId = $container->getParameter('setono_sylius_partner_ads.http_client');
 
-        /** @var string|null $httpClientServiceIdParam */
-        $httpClientServiceIdParam = $container->getParameter('setono_sylius_partner_ads.http_client');
-        if (null === $httpClientServiceIdParam) {
-            if (!interface_exists(BuzzClientInterface::class)) {
-                throw new InterfaceNotFoundException(BuzzClientInterface::class);
-            }
+        // services are referenced with a leading '@' in service definitions, so it is an easy mistake to
+        // make in the plugin configuration as well - accept it instead of failing with a confusing error
+        $serviceId = ltrim($serviceId, '@');
 
-            $definition = new Definition(Curl::class, [
-                new Reference('setono_sylius_partner_ads.http_client.response_factory'),
-                // Buzz defaults to no timeout at all - make sure a hanging Partner Ads endpoint cannot hang the caller
-                ['timeout' => 30],
-            ]);
-            $container->setDefinition($httpClientServiceId, $definition);
-        } else {
-            // services are referenced with a leading '@' in service definitions, so it is an easy mistake to
-            // make in the plugin configuration as well - accept it instead of failing with a confusing error
-            $httpClientServiceIdParam = ltrim($httpClientServiceIdParam, '@');
-
-            if (!$container->has($httpClientServiceIdParam)) {
-                throw new ServiceNotFoundException($httpClientServiceIdParam);
-            }
-            $container->setAlias($httpClientServiceId, $httpClientServiceIdParam);
+        if (!$container->has($serviceId)) {
+            throw new ServiceNotFoundException($serviceId, msg: sprintf(
+                'The HTTP client service "%s" configured as setono_sylius_partner_ads.http_client does not exist. Install symfony/http-client (Symfony then registers "psr18.http_client", the default) or configure the id of another PSR-18 client.',
+                $serviceId,
+            ));
         }
+
+        $container->setAlias('setono_sylius_partner_ads.http_client', $serviceId);
     }
 }

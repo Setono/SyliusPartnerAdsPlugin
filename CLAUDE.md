@@ -47,7 +47,8 @@ Sylius 2 plugin that tracks sales for the Danish affiliate network Partner Ads:
   config value.
 - `src/Client` + `src/UrlProvider` - the HTTP call. Placeholders in the notify URL are URL-encoded; any 2xx is
   a success. `RegisterHttpClientPass` aliases `setono_sylius_partner_ads.http_client` to the configured PSR-18
-  service (a leading `@` is tolerated) or to a Buzz `Curl` client with a 30s timeout when nothing is configured.
+  service (default `psr18.http_client`, a leading `@` is tolerated). The plugin deliberately ships no
+  fallback HTTP client - the application chooses the client and its timeouts.
 - `src/DependencyInjection` - `Configuration` (config tree incl. both resources) and the extension, which also
   prepends the two admin grids. `config/services.php` wires everything; `config/routes/admin.yaml` exposes the
   admin resources; `translations/` holds all UI strings.

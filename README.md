@@ -54,21 +54,21 @@ setono_sylius_partner_ads:
 
 ### Step 4: HTTP client
 
-The plugin sends its notifications through a [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP client. Point the plugin at the service id of the client you want to use (with or without a leading `@`):
+The plugin sends its notifications through a [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP client and ships none of its own. By default it uses `psr18.http_client`, the adapter Symfony registers automatically when [`symfony/http-client`](https://symfony.com/doc/current/http_client.html#psr-18-and-psr-17) is installed - which Sylius already requires. The adapter (like the plugin itself) needs a PSR-17 factory, so make sure one is installed:
+
+```bash
+composer require nyholm/psr7
+```
+
+To use another PSR-18 client, point the plugin at its service id (with or without a leading `@`):
 
 ```yaml
 # config/packages/setono_sylius_partner_ads.yaml
 setono_sylius_partner_ads:
-    http_client: psr18.http_client
+    http_client: my_psr18_client
 ```
 
-`psr18.http_client` is the PSR-18 adapter that Symfony registers automatically when [`symfony/http-client`](https://symfony.com/doc/current/http_client.html#psr-18-and-psr-17) and a PSR-17 factory are installed, which is the recommended setup:
-
-```bash
-composer require symfony/http-client nyholm/psr7
-```
-
-If you configure no client at all, the plugin falls back to [Buzz](https://github.com/kriswallsmith/Buzz) when it is installed (`composer require kriswallsmith/buzz`). Buzz has not seen a release in years, so prefer the Symfony client for new installations.
+Timeouts are the client's concern - Symfony's HTTP client has sensible defaults, and you can tune them through its own configuration.
 
 ### Step 5: Update your database schema
 
