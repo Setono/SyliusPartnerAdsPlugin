@@ -6,3 +6,4 @@ setono_sylius_partner_ads:
             greater_than: Program-id skal være større end {{ compared_value }}.
         channel:
             not_null: Du bedes vælge en kanal
+            unique: Der findes allerede et program for denne kanal. Rediger det program i stedet.

@@ -14,6 +14,18 @@
                 <value>setono_sylius_partner_ads</value>
             </option>
         </constraint>
+        <!-- one program per channel: the mapping enforces this with a unique constraint, and without this
+             validation the admin would get a database error instead of a form error -->
+        <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
+            <option name="fields">
+                <value>channel</value>
+            </option>
+            <option name="errorPath">channel</option>
+            <option name="message">setono_sylius_partner_ads.program.channel.unique</option>
+            <option name="groups">
+                <value>setono_sylius_partner_ads</value>
+            </option>
+        </constraint>
         <property name="programId">
             <constraint name="NotBlank">
                 <option name="message">setono_sylius_partner_ads.program.program_id.not_blank</option>
