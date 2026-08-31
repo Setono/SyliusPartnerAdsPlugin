@@ -142,6 +142,24 @@ final class CreateConversionSubscriberTest extends TestCase
         $this->getSubscriber()->createConversion(new GenericEvent($order->reveal()));
     }
 
+    #[Test]
+    public function it_fails_when_the_factory_does_not_create_a_conversion(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $this->cookieHandler->has($this->request)->willReturn(true);
+        $this->cookieHandler->get($this->request)->willReturn(42);
+
+        $this->conversionRepository->findOneByOrder($order->reveal())->willReturn(null);
+        $this->conversionFactory->createNew()->willReturn(new \stdClass());
+
+        $this->conversionRepository->add(Argument::any())->shouldNotBeCalled();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->getSubscriber()->createConversion(new GenericEvent($order->reveal()));
+    }
+
     private function getSubscriber(): CreateConversionSubscriber
     {
         return new CreateConversionSubscriber(

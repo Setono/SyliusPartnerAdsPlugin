@@ -53,5 +53,11 @@ final class RegisterHttpClientPassTest extends AbstractCompilerPassTestCase
             0,
             new Reference('setono_sylius_partner_ads.http_client.response_factory'),
         );
+        // Buzz defaults to no timeout at all, so the pass must set one explicitly
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument(
+            'setono_sylius_partner_ads.http_client',
+            1,
+            ['timeout' => 30],
+        );
     }
 }

@@ -23,6 +23,7 @@ final class ConversionTest extends TestCase
         self::assertSame(0, $conversion->getTries());
         self::assertNull($conversion->getLastError());
         self::assertNull($conversion->getNotifiedAt());
+        self::assertEqualsWithDelta(time(), $conversion->getCreatedAt()->getTimestamp(), 5);
     }
 
     #[Test]

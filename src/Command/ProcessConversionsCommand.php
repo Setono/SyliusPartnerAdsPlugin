@@ -71,7 +71,19 @@ final class ProcessConversionsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $lock = $this->lockFactory->createLock(self::LOCK_RESOURCE, self::LOCK_TTL);
+        $limit = (int) $input->getOption('limit');
+        if ($limit < 1) {
+            throw new \InvalidArgumentException('The --limit option must be at least 1');
+        }
+
+        $maxTries = (int) $input->getOption('max-tries');
+        if ($maxTries < 1) {
+            throw new \InvalidArgumentException('The --max-tries option must be at least 1');
+        }
+
+        // The lock is released explicitly in the finally block below. Auto release (which relies on the
+        // destructor of the lock object) is disabled so that the release is deterministic and observable.
+        $lock = $this->lockFactory->createLock(self::LOCK_RESOURCE, self::LOCK_TTL, autoRelease: false);
         if (!$lock->acquire()) {
             $io->warning('Another instance of this command is already running - exiting');
 
@@ -79,17 +91,14 @@ final class ProcessConversionsCommand extends Command
         }
 
         try {
-            return $this->process($input, $io);
+            return $this->process($limit, $maxTries, $io);
         } finally {
             $lock->release();
         }
     }
 
-    private function process(InputInterface $input, SymfonyStyle $io): int
+    private function process(int $limit, int $maxTries, SymfonyStyle $io): int
     {
-        $limit = max(1, (int) $input->getOption('limit'));
-        $maxTries = max(1, (int) $input->getOption('max-tries'));
-
         $conversions = $this->conversionRepository->findPending($limit, $this->notifyWhen);
 
         if ([] === $conversions) {

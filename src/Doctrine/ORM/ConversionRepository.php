@@ -11,13 +11,13 @@ use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\OrderCheckoutStates;
 use Sylius\Component\Core\OrderPaymentStates;
-use Webmozart\Assert\Assert;
 
 class ConversionRepository extends EntityRepository implements ConversionRepositoryInterface
 {
     public function findOneByOrder(OrderInterface $order): ?ConversionInterface
     {
         // more than one conversion can exist for an order (see CreateConversionSubscriber), so cap the result
+        /** @var ConversionInterface|null $obj */
         $obj = $this->createQueryBuilder('o')
             ->andWhere('o.order = :order')
             ->setParameter('order', $order)
@@ -27,24 +27,23 @@ class ConversionRepository extends EntityRepository implements ConversionReposit
             ->getOneOrNullResult()
         ;
 
-        Assert::nullOrIsInstanceOf($obj, ConversionInterface::class);
-
         return $obj;
     }
 
     public function hasNotifiedConversionForOrder(OrderInterface $order): bool
     {
-        $count = (int) $this->createQueryBuilder('o')
-            ->select('COUNT(o.id)')
+        $result = $this->createQueryBuilder('o')
+            ->select('o.id')
             ->andWhere('o.order = :order')
             ->andWhere('o.state = :state')
             ->setParameter('order', $order)
             ->setParameter('state', ConversionInterface::STATE_NOTIFIED)
+            ->setMaxResults(1)
             ->getQuery()
-            ->getSingleScalarResult()
+            ->getOneOrNullResult()
         ;
 
-        return $count > 0;
+        return null !== $result;
     }
 
     public function findPending(int $limit, NotifyWhen $notifyWhen): array
@@ -69,11 +68,9 @@ class ConversionRepository extends EntityRepository implements ConversionReposit
             ;
         }
 
+        /** @var list<ConversionInterface> $objs */
         $objs = $qb->getQuery()->getResult();
 
-        Assert::isArray($objs);
-        Assert::allIsInstanceOf($objs, ConversionInterface::class);
-
-        return array_values($objs);
+        return $objs;
     }
 }
