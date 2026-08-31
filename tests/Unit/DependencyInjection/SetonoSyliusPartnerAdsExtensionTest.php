@@ -8,8 +8,8 @@ use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Setono\SyliusPartnerAdsPlugin\Calculator\OrderTotalCalculator;
 use Setono\SyliusPartnerAdsPlugin\DependencyInjection\SetonoSyliusPartnerAdsExtension;
+use Setono\SyliusPartnerAdsPlugin\Enum\NotifyWhen;
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
-use Setono\SyliusPartnerAdsPlugin\NotifyWhen;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class SetonoSyliusPartnerAdsExtensionTest extends AbstractExtensionTestCase

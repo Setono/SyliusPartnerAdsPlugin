@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Setono\SyliusPartnerAdsPlugin;
+namespace Setono\SyliusPartnerAdsPlugin\Enum;
 
 /**
  * Decides which orders' conversions are eligible to be sent to Partner Ads

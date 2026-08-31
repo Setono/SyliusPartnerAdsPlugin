@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\DependencyInjection;
 
+use Setono\SyliusPartnerAdsPlugin\Enum\NotifyWhen;
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
-use Setono\SyliusPartnerAdsPlugin\NotifyWhen;
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

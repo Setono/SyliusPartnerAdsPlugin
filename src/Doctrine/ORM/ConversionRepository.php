@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\SyliusPartnerAdsPlugin\Doctrine\ORM;
 
+use Setono\SyliusPartnerAdsPlugin\Enum\NotifyWhen;
 use Setono\SyliusPartnerAdsPlugin\Model\ConversionInterface;
-use Setono\SyliusPartnerAdsPlugin\NotifyWhen;
 use Setono\SyliusPartnerAdsPlugin\Repository\ConversionRepositoryInterface;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\OrderInterface;
